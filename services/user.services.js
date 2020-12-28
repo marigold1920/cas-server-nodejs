@@ -49,9 +49,10 @@ async function signupRequester(params) {
     const roleRequester = await Role.findByPk(1);
     // save user
     const _user = await User.create(params);
-    const data = await roleRequester.addUser(_user);
+    // const data = await roleRequester.addUser(_user);
+    await _user.setRole(roleRequester);
 
-    return data;
+    return omitHash(_user.get());;
 } 
 
 function omitHash(user) {
