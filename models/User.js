@@ -52,7 +52,18 @@ const User = sequelize.define(
             field: "success_rate"
         }
     },
-    { timestamps: false, initialAutoIncrement: 100, freezeTableName: true }
+    { 
+        timestamps: false, 
+        initialAutoIncrement: 100, 
+        freezeTableName: true,
+        defaultScope: {
+            attributes: {exclude: ['password']}
+        },
+        scopes: {
+            // include hash with this scope
+            withHash: { attributes: {}, }
+        }
+    }
 );
 
 // Role.hasMany(User);
