@@ -6,6 +6,7 @@ const sequelize = require("./configs/database");
 const errorHandler = require("./middlewares/errorHandler");
 const users = require("./routes/user.controllers");
 const requests = require("./routes/request.controllers");
+const requester = require('./routes/requester.controller');
 
 const PORT = process.env.PORT || 5000;
 const app = express();
@@ -20,6 +21,7 @@ sequelize.sync();
 // Mount router
 app.use("/api/users", users);
 app.use("/api", requests);
+app.use("/api", requester);
 
 app.use(errorHandler);
 
