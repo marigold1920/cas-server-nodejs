@@ -58,11 +58,14 @@ exports.registerAmbulance = asyncHandler(async (request, response) => {
 
 exports.updateAmbulance = asyncHandler(async (request, response) => {
     let ambulance = request.body;
-    await model.Ambulance.update(ambulance, {
-        where: {
-            id: ambulance.ambulanceId
+    await model.Ambulance.update(
+        { ...ambulance, note: null },
+        {
+            where: {
+                id: ambulance.ambulanceId
+            }
         }
-    });
+    );
 
     ambulance = await model.Ambulance.findByPk(ambulance.ambulanceId);
     await ambulance.setStatus("CONFIRMING");
@@ -89,4 +92,17 @@ exports.grantDriverPermission = asyncHandler(async (request, response) => {
     await driver.update({ isActive: !driver.isActive });
 
     response.status(200).json(driver.isActive);
+});
+
+exports.unregisterAmbulance = asyncHandler(async (request, response) => {
+    await model.Ambulance.update(
+        { ambulance_status: "CANCELED", note: null },
+        {
+            where: {
+                id: request.params.ambulanceId
+            }
+        }
+    );
+
+    response.status(200).json(request.params.ambulanceId);
 });
