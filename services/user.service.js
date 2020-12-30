@@ -54,7 +54,7 @@ exports.authenticateRequester = asyncHandler(async (req, res) => {
     });
     if (!user || !(await bcrypt.compare(password, user.password)))
         throw 'Username or password is incorrect';
-    const token = jwt.sign({ sub: user.id }, 'CAS-SECRET', { expiresIn: '1d' });
+    const token = jwt.sign({ sub: user.id }, process.env.JWT_KEY, { expiresIn: '1d' });
     
     res.status(200).json({ ...omitHash(user.get()), token });
 
@@ -69,7 +69,7 @@ exports.authenticateDriver = asyncHandler(async (req, res) => {
     });
     if (!user || !(await bcrypt.compare(password, user.password)))
         throw 'Username or password is incorrect';
-    const token = jwt.sign({ sub: user.id }, 'CAS-SECRET', { expiresIn: '1d' });
+    const token = jwt.sign({ sub: user.id }, process.env.JWT_KEY, { expiresIn: '1d' });
     
     res.status(200).json({ ...omitHash(user.get()), token });
 });
@@ -83,7 +83,7 @@ exports.authenticateAdmin = asyncHandler(async (req, res) => {
     });
     if (!user || !(await bcrypt.compare(password, user.password)))
         throw 'Username or password is incorrect';
-    const token = jwt.sign({ sub: user.id }, 'CAS-SECRET', { expiresIn: '1d' });
+    const token = jwt.sign({ sub: user.id }, process.env.JWT_KEY, { expiresIn: '1d' });
     
     res.status(200).json({ ...omitHash(user.get()), token });
 });
