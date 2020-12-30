@@ -47,12 +47,4 @@ const Ambulance = sequelize.define(
     { freezeTableName: true, timestamps: false, initialAutoIncrement: 1 }
 );
 
-// Status relationship
-// AmbulanceStatus.hasMany(Ambulance);
-Ambulance.belongsTo(AmbulanceStatus, { foreignKey: "ambulance_status", as: "status" });
-
-// User relationship
-// User.hasMany(Ambulance);
-Ambulance.belongsTo(User, { foreignKey: "driver_id", as: "driver" });
-
 module.exports = Ambulance;

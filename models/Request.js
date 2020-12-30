@@ -68,19 +68,4 @@ const Request = sequelize.define(
     { freezeTableName: true, initialAutoIncrement: 100, timestamps: false }
 );
 
-// Status relationship
-Request.belongsTo(RequestStatus, { foreignKey: "request_status", as: "status" });
-
-// Ambulance relationship
-// Ambulance.hasMany(Request);
-Request.belongsTo(Ambulance, { foreignKey: "ambulance_id", as: "ambulance" });
-
-// Driver relationship
-// User.hasMany(Request);
-Request.belongsTo(User, { foreignKey: "driver_id", as: "driver" });
-
-// Requester relationship
-// User.hasMany(Request);
-Request.belongsTo(User, { foreignKey: "requester_id", as: "requester" });
-
 module.exports = Request;

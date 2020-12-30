@@ -52,21 +52,18 @@ const User = sequelize.define(
             field: "success_rate"
         }
     },
-    { 
-        timestamps: false, 
-        initialAutoIncrement: 100, 
+    {
+        timestamps: false,
+        initialAutoIncrement: 100,
         freezeTableName: true,
         defaultScope: {
-            attributes: {exclude: ['password']}
+            attributes: { exclude: ["password"] }
         },
         scopes: {
             // include hash with this scope
-            withHash: { attributes: {}, }
+            withHash: { attributes: {} }
         }
     }
 );
-
-// Role.hasMany(User);
-User.belongsTo(Role, { foreignKey: "role_id", as: "role" });
 
 module.exports = User;
