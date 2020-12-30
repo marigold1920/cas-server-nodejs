@@ -24,13 +24,8 @@ exports.getAllDriversAndPaging = asyncHandler(async (request, response) => {
         where: {
             displayName: {
                 [Op.like]: `%${keyword}%`
-            }
-        },
-        include: {
-            model: model.Role,
-            as: "role",
-            attributes: [],
-            where: { roleId: 2 }
+            },
+            role_id: 2
         }
     });
 

@@ -49,6 +49,10 @@ const User = sequelize.define(
         successRate: {
             type: DataTypes.FLOAT,
             field: "success_rate"
+        },
+        healthInformation: {
+            type: DataTypes.JSON,
+            field: "health_information"
         }
     },
     {
