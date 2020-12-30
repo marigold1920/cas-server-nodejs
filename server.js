@@ -10,6 +10,7 @@ const requests = require("./routes/request.controller");
 const requesters = require("./routes/requester.controller");
 const drivers = require("./routes/driver.controller");
 const systems = require("./routes/system.controller");
+const ambulances = require("./routes/ambulance.controller");
 
 const PORT = process.env.PORT || 5000;
 const app = express();
@@ -24,7 +25,7 @@ sequelize.sync();
 
 // Mount router
 app.use("/api/users", users);
-app.use("/api", requests, requesters, drivers, systems);
+app.use("/api", requests, requesters, drivers, systems, ambulances);
 
 app.use(errorHandler);
 
