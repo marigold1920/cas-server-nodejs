@@ -3,11 +3,12 @@ const dotenv = require("dotenv");
 const morgan = require("morgan");
 const cors = require("cors");
 
-const sequelize = require("./configs/database");
+const sequelize = require("./configs/database.config");
 const errorHandler = require("./middlewares/errorHandler");
-const users = require("./routes/user.controllers");
-const requests = require("./routes/request.controllers");
-const drivers = require("./routes/driver.controllers");
+const users = require("./routes/user.controller");
+const requests = require("./routes/request.controller");
+const requesters = require("./routes/requester.controller");
+const drivers = require("./routes/driver.controller");
 
 const PORT = process.env.PORT || 5000;
 const app = express();
@@ -22,7 +23,7 @@ sequelize.sync();
 
 // Mount router
 app.use("/api/users", users);
-app.use("/api", requests, drivers);
+app.use("/api", requests, requesters, drivers);
 
 app.use(errorHandler);
 
