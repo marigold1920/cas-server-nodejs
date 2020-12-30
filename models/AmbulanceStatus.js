@@ -1,4 +1,4 @@
-const sequelize = require("../configs/database");
+const sequelize = require("../configs/database.config");
 const { DataTypes } = require("sequelize");
 
 const AmbulanceStatus = sequelize.define(

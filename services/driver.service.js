@@ -70,4 +70,23 @@ exports.updateAmbulance = asyncHandler(async (request, response) => {
     response.status(200).json(ambulance);
 });
 
-exports.grantDriverPermission = asyncHandler(async (request, response) => {});
+exports.grantDriverPermission = asyncHandler(async (request, response) => {
+    const userId = request.params.driverId;
+    const driver = await model.User.findByPk(userId);
+
+    if (driver.isActive) {
+        const isInRequest = await sequelize.query(queries.isJoinInRequest, {
+            type: QueryTypes.SELECT,
+            replacements: { userId }
+        });
+
+        if (isInRequest.length) {
+            response.status(400).json();
+            return;
+        }
+    }
+
+    await driver.update({ isActive: !driver.isActive });
+
+    response.status(200).json(driver.isActive);
+});

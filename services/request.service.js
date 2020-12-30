@@ -37,37 +37,18 @@ exports.acceptRequest = asyncHandler(async (request, response) => {
     });
 });
 
-exports.history = asyncHandler(async (request, response) => {
+exports.history = asyncHandler(async (request, response) => {});
+exports.historyDetails = asyncHandler(async (request, response) => {});
 
-});
-exports.historyDetails = asyncHandler(async (request, response) => {
+exports.driverHistoryDetails = asyncHandler(async (request, response) => {});
+exports.driverHistory = asyncHandler(async (request, response) => {});
+exports.getAllRequestsAndPaging = asyncHandler(async (request, response) => {});
+exports.getRequestDetails = asyncHandler(async (request, response) => {});
 
-});
+exports.getRequestById = asyncHandler(async (request, response) => {});
 
-exports.driverHistoryDetails = asyncHandler(async (request, response) => {
-
-});
-exports.driverHistory = asyncHandler(async (request, response) => {
-
-});
-exports.getAllRequestsAndPaging = asyncHandler(async (request, response) => {
-
-});
-exports.getRequestDetails = asyncHandler(async (request, response) => {
-
-});
-exports.getInfoDriver = asyncHandler(async (request, response) => {
-
-});
-exports.finishRequest = asyncHandler(async (request, response) => {
-
-});
-exports.pickUpPatient = asyncHandler(async (request, response) => {
-
-});
-exports.rejectRequest = asyncHandler(async (request, response) => {
-
-});
-exports.feedbackRequest = asyncHandler(async (request, response) => {
-
-});
+exports.getInfoDriver = asyncHandler(async (request, response) => {});
+exports.finishRequest = asyncHandler(async (request, response) => {});
+exports.pickUpPatient = asyncHandler(async (request, response) => {});
+exports.rejectRequest = asyncHandler(async (request, response) => {});
+exports.feedbackRequest = asyncHandler(async (request, response) => {});
