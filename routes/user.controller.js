@@ -24,9 +24,9 @@ router.post("/signup_driver", signUpDriver);
 router.put("/requesters/forget_password", forgetPasswordRequester);
 router.put("/drivers/forget_password", forgetPasswordDriver);
 router.put("/admins/forget_password", forgetPasswordAdmin);
-router.put("/requesters/check_exist", checkExistedRequester);
-router.put("/drivers/check_exist", checkExistedDriver);
-router.put("/admins/check_exist", checkExistedAdmin);
+router.get("/requesters/check_exist", checkExistedRequester);
+router.get("/drivers/check_exist", checkExistedDriver);
+router.get("/admins/check_exist", checkExistedAdmin);
 
 
 module.exports = router;
