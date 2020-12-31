@@ -27,5 +27,33 @@ module.exports = {
     getPopularRegion:
         "SELECT region FROM (SELECT region, COUNT(id) AS val FROM request GROUP BY region) temp_table GROUP BY region HAVING MAX(val)",
     getSuccessRate:
-        "SELECT (SELECT COUNT(id) AS val FROM request WHERE request_status = 'SUCCESS') / (SELECT COUNT(id) FROM request) * 100 as rate"
+        "SELECT (SELECT COUNT(id) AS val FROM request WHERE request_status = 'SUCCESS') / (SELECT COUNT(id) FROM request) * 100 as rate",
+    getRequesterHistory:
+        "SELECT r.id AS requestId, u.image_url AS userImage, rs.name AS status,  JSON_EXTRACT(r.destination, '$.name') AS destinationName, " +
+        "JSON_EXTRACT(r.destination, '$.address') AS address, DATE_FORMAT( r.created_date, '%d/%m/%Y') AS dateCreated " +
+        "FROM request AS r INNER JOIN user AS u ON r.requester_id = u.id " +
+        "INNER JOIN request_status AS rs ON r.request_status = rs.status_code " +
+        "WHERE r.requester_id = :userId ORDER BY r.created_date DESC LIMIT :offset, :pageSize",
+    getDriverHistory:
+        "SELECT r.id AS requestId, u.image_url AS userImage, rs.name AS status,  JSON_EXTRACT(r.destination, '$.name') AS destinationName, " +
+        "JSON_EXTRACT(r.destination, '$.address') AS address, DATE_FORMAT( r.created_date, '%d/%m/%Y') AS dateCreated " +
+        "FROM request AS r INNER JOIN user AS u ON r.requester_id = u.id " +
+        "INNER JOIN request_status AS rs ON r.request_status = rs.status_code " +
+        "WHERE r.driver_id = :userId ORDER BY r.created_date DESC LIMIT :offset, :pageSize",
+    getRequestsForAdmin:
+        "SELECT r.id, re.display_name AS requesterName, re.image_url AS requesterImage, dr.display_name AS driverName, " +
+        "dr.image_url AS driverImage, a.license_plate AS licensePlate, r.is_emergency AS emergency, rs.name AS status " +
+        "FROM request AS r INNER JOIN user AS re ON r.requester_id = re.id " +
+        "INNER JOIN user AS dr ON r.driver_id = dr.id " +
+        "INNER JOIN request_status AS rs ON r.request_status = rs.status_code " +
+        "INNER JOIN ambulance AS a ON r.ambulance_id = a.id " +
+        "WHERE (dr.display_name LIKE :keyword OR re.display_name LIKE :keyword) AND rs.name LIKE :status ORDER BY r.created_date DESC LIMIT :offset,:pageSize",
+    updateSuccessRateForRequester:
+        "UPDATE user SET success_rate = (SELECT COUNT(id) FROM request WHERE requester_id = :userId AND request_status = 'SUCCESS') / " +
+        "(SELECT COUNT(id) FROM request WHERE requester_id = :userId) * 100, " +
+        "num_of_requests = (SELECT COUNT(id) FROM request WHERE requester_id = :userId) WHERE id = :userId",
+    updateSuccessRateForDriver:
+        "UPDATE user SET success_rate = (SELECT COUNT(id) FROM request WHERE driver_id = :userId AND request_status = 'SUCCESS') / " +
+        "(SELECT COUNT(id) FROM request WHERE driver_id = :userId) * 100, " +
+        "num_of_requests = (SELECT COUNT(id) FROM request WHERE driver_id = :userId) WHERE id = :userId"
 };

@@ -20,6 +20,10 @@ const Request = sequelize.define(
             type: DataTypes.STRING,
             field: "patient_phone"
         },
+        healthInformation: {
+            type: DataTypes.JSON,
+            field: "health_information"
+        },
         createdDate: {
             type: DataTypes.DATEONLY,
             defaultValue: new Date(),
@@ -60,6 +64,9 @@ const Request = sequelize.define(
         ratingDriver: {
             type: DataTypes.INTEGER,
             field: "rating_driver"
+        },
+        reason: {
+            type: DataTypes.STRING
         }
     },
     { freezeTableName: true, initialAutoIncrement: 100, timestamps: false }

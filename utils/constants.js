@@ -4,6 +4,10 @@ module.exports = {
     ACTIVE_AMBULANCE_STATUS: "ACTIVE",
     DEACTIVE_AMBULANCE_STATUS: "DEACTIVE",
     PROCESSING_REQUEST_STATUS: "PROCESSING",
+    CANCELED_REQUEST_STATUS: "CANCELED",
+    SUCCESS_REQUEST_STATUS: "SUCCESS",
+    FAIL_REQUEST_STATUS: "FAIL",
+    CANCELED_REASON: "Bị hủy bởi người gửi yêu cầu",
     ACTIVE: "Đang hoạt động",
     DEACTIVE: "Ngưng hoạt động",
     CONFIRMING: "Chờ xác nhận"
