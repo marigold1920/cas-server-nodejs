@@ -13,7 +13,7 @@ const systems = require("./routes/system.controller");
 const ambulances = require("./routes/ambulance.controller");
 const reports = require("./routes/report.controller");
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 const app = express();
 
 // Load ENV variables
