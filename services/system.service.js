@@ -6,6 +6,7 @@ exports.getConfiguration = asyncHandler(async (request, response) => {
 
     response.status(200).json(configurations);
 });
+
 exports.updateSystemConfiguration = asyncHandler(async (request, response) => {
     const configurations = request.body;
 

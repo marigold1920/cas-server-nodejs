@@ -1,7 +1,7 @@
 const asyncHandler = require("../middlewares/asyncHandler");
 const model = require("../models/Model.master");
 const sequelize = require("../configs/database.config");
-const queries = require("../configs/databse.queries");
+const queries = require("../configs/database.queries");
 const Constant = require("../utils/constants");
 const { QueryTypes } = require("sequelize");
 

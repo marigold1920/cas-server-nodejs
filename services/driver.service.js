@@ -4,7 +4,7 @@ const sequelize = require("../configs/database.config");
 const asyncHandler = require("../middlewares/asyncHandler");
 const Constant = require("../utils/constants");
 const model = require("../models/Model.master");
-const queries = require("../configs/databse.queries");
+const queries = require("../configs/database.queries");
 
 exports.getAllDriversAndPaging = asyncHandler(async (request, response) => {
     const { pageIndex, keyword } = request.query;

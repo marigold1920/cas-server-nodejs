@@ -1,7 +1,7 @@
 const { QueryTypes } = require("sequelize");
 const asyncHandler = require("../middlewares/asyncHandler");
 const sequelize = require("../configs/database.config");
-const queries = require("../configs/databse.queries");
+const queries = require("../configs/database.queries");
 const model = require("../models/Model.master");
 
 exports.getReport = asyncHandler(async (request, response) => {

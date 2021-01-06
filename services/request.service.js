@@ -1,11 +1,13 @@
 const model = require("../models/Model.master");
 const sequelize = require("../configs/database.config");
 const asyncHandler = require("../middlewares/asyncHandler");
-const queries = require("../configs/databse.queries");
+const queries = require("../configs/database.queries");
 const Constant = require("../utils/constants");
 const { QueryTypes } = require("sequelize");
+const { pushEvent, popEvent } = require("./dispatcher.service");
 
 exports.saveRequest = asyncHandler(async (request, response) => {
+    const { latitude, longitude, isEmergency } = request.body;
     const req = await model.Request.create(request.body);
     const userId = request.params.userId;
 
@@ -14,6 +16,12 @@ exports.saveRequest = asyncHandler(async (request, response) => {
     await sequelize.query(queries.updateSuccessRateForRequester, {
         type: QueryTypes.UPDATE,
         replacements: { userId }
+    });
+    pushEvent({
+        requestId: req.id,
+        latitude,
+        longitude,
+        type: isEmergency ? "emergency" : "home"
     });
 
     response.status(201).json(req.id);
@@ -252,7 +260,7 @@ exports.pickUpPatient = asyncHandler(async (request, response) => {
 });
 
 exports.cancelRequest = asyncHandler(async (request, response) => {
-    const requestId = request.params.requestId;
+    const requestId = Number.parseInt(request.params.requestId);
     await model.Request.update(
         {
             request_status: Constant.CANCELED_REQUEST_STATUS,
@@ -260,6 +268,7 @@ exports.cancelRequest = asyncHandler(async (request, response) => {
         },
         { where: { id: requestId } }
     );
+    popEvent(requestId);
 
     response.status(200).json(requestId);
 });
