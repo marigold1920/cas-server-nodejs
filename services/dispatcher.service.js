@@ -1,4 +1,8 @@
-const { findDrivers, dispatchRequestToDriver } = require("../configs/firebase.config");
+const {
+    findDrivers,
+    dispatchRequestToDrivers,
+    removeRequestFromDrivers
+} = require("../configs/firebase.config");
 
 let backupRadiuses = new Map();
 let pendingEvents = new Map();
@@ -16,7 +20,6 @@ const handleRequest = async (requestId, latitude, longitude, type) => {
     let radius = backupRadiuses.get(requestId) || config.radius;
     const { extraRadius, maxRadius } = config;
     let result = await findDrivers(latitude, longitude, radius, type);
-    console.log("Task is running for " + requestId);
 
     if (!result.length && radius < maxRadius) {
         radius = Math.min(radius + extraRadius, maxRadius);
@@ -33,7 +36,7 @@ const dispatchRequest = (requestId, list) => {
     const difference =
         (preDrivers.length && list.filter(d => !preDrivers.some(pd => pd.id === d.id))) || list;
 
-    difference.length && dispatchRequestToDriver(requestId, difference);
+    difference.length && dispatchRequestToDrivers(requestId, difference);
 };
 
 const assignTask = (requestId, latitude, longitude, type) => {
@@ -55,10 +58,11 @@ exports.pushEvent = request => {
 };
 
 exports.popEvent = requestId => {
-    const task = pendingEvents.get(requestId);
-
-    clearInterval(task);
+    removeRequestFromDrivers(requestId, drivers.get(requestId));
+    clearInterval(pendingEvents.get(requestId));
     pendingEvents.delete(requestId);
+    drivers.delete(requestId);
+    backupRadiuses.delete(requestId);
 };
 
 exports.updateConfig = newConfig => {

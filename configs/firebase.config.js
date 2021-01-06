@@ -31,7 +31,7 @@ exports.findDrivers = (latitude, longitude, radius, type) => {
         .then(snapshot => snapshot.docs.filter(item => item.distance <= item.data().distance));
 };
 
-exports.dispatchRequestToDriver = async (requestId, drivers = []) => {
+exports.dispatchRequestToDrivers = async (requestId, drivers = []) => {
     const batch = firestore.batch();
     const driverCollectionRef = firestore.collection("confirmations");
 
@@ -40,6 +40,21 @@ exports.dispatchRequestToDriver = async (requestId, drivers = []) => {
 
         batch.update(driverDocumentRef, {
             request: firebase.firestore.FieldValue.arrayUnion(requestId)
+        });
+    });
+
+    await batch.commit();
+};
+
+exports.removeRequestFromDrivers = async (requestId, drivers = []) => {
+    const batch = firestore.batch();
+    const driverCollectionRef = firestore.collection("confirmations");
+
+    drivers.forEach(d => {
+        const driverDocumentRef = driverCollectionRef.doc(d.id);
+
+        batch.update(driverDocumentRef, {
+            request: firebase.firestore.FieldValue.arrayRemove(requestId)
         });
     });
 
