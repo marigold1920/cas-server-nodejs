@@ -10,5 +10,6 @@ module.exports = {
     CANCELED_REASON: "Bị hủy bởi người gửi yêu cầu",
     ACTIVE: "Đang hoạt động",
     DEACTIVE: "Ngưng hoạt động",
-    CONFIRMING: "Chờ xác nhận"
+    CONFIRMING: "Chờ xác nhận",
+    ROLE_REQUESTER: 1
 };

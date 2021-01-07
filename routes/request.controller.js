@@ -19,7 +19,7 @@ const {
 
 const router = express.Router();
 
-router.route("/requester/:userId/requests").post(saveRequest);
+router.route("/requester/requests/:userId").post(saveRequest);
 router.get("/requester/requests/:requestId", getInfoDriver);
 router.put("/requester/requests/:requestId", feedbackRequest);
 router.put("/requester/requests/cancel/:requestId", cancelRequest);
