@@ -169,7 +169,6 @@ exports.getRequestDetails = asyncHandler(async (request, response) => {
             }
         ]
     });
-
     response.status(200).json(_request);
 });
 
@@ -224,7 +223,7 @@ exports.finishRequest = asyncHandler(async (request, response) => {
     const req = await model.Request.findByPk(request.params.requestId);
     const destination = {
         ...req.destination,
-        date: current.toLocaleDateString(),
+        date: current.toLocaleDateString('vi-VN'),
         time: `${String(current.getHours()).padStart(2, "0")}:${String(
             current.getMinutes()
         ).padStart(2, "0")}`
@@ -248,7 +247,7 @@ exports.pickUpPatient = asyncHandler(async (request, response) => {
     const req = await model.Request.findByPk(request.params.requestId);
     const pickUp = {
         ...req.pickUp,
-        date: current.toLocaleDateString(),
+        date: current.toLocaleDateString('vi-VN'),
         time: `${String(current.getHours()).padStart(2, "0")}:${String(
             current.getMinutes()
         ).padStart(2, "0")}`
