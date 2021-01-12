@@ -4,6 +4,16 @@ const model = require("../models/Model.master");
 const asyncHandler = require("../middlewares/asyncHandler");
 const Constant = require("../utils/constants");
 
+exports.saveSetting = asyncHandler(async (req, res) => {
+    const setting = req.body;
+    await model.Setting.update(setting, {
+        where: { id: setting.id },
+        returning: true
+    });
+
+    res.status(200).json(setting);
+});
+
 exports.signUpRequester = asyncHandler(async (req, res) => {
     if (req.body.password) {
         req.body.password = await bcrypt.hash(req.body.password, 10);
@@ -74,11 +84,12 @@ exports.authenticateDriver = asyncHandler(async (req, res) => {
             role_id: 2
         }
     });
+    const setting = await model.Setting.findOne({ where: { user_id: user.id } });
     if (!user || !(await bcrypt.compare(password, user.password)))
         throw "Username or password is incorrect";
     const token = jwt.sign({ sub: user.id }, process.env.JWT_KEY, { expiresIn: "1d" });
 
-    res.status(200).json({ ...omitHash(user.get()), token });
+    res.status(200).json({ user: { ...omitHash(user.get()), token }, setting });
 });
 
 exports.authenticateAdmin = asyncHandler(async (req, res) => {
@@ -148,54 +159,15 @@ exports.forgetPasswordAdmin = asyncHandler(async (req, res) => {
     }
 });
 
-exports.checkExistedRequester = asyncHandler(async (req, res) => {
+exports.checkExistedUser = asyncHandler(async (req, res) => {
     const username = req.query.username;
     const user = await model.User.findOne({
         where: {
-            username: username,
-            role_id: 1
+            username: username
         }
     });
 
     res.status(200).json(user ? user.username : null);
-});
-
-exports.checkExistedDriver = asyncHandler(async (req, res) => {
-    const username = req.query.username;
-    try {
-        const user = await model.User.findOne({
-            where: {
-                username: username,
-                role_id: 2
-            }
-        });
-        if (!user) {
-            res.status(404).json({ message: "User not found" });
-        } else {
-            res.status(200).json({ username: username });
-        }
-    } catch (err) {
-        res.status(500).json({ message: err });
-    }
-});
-
-exports.checkExistedAdmin = asyncHandler(async (req, res) => {
-    const username = req.query.username;
-    try {
-        const user = await model.User.findOne({
-            where: {
-                username: username,
-                role_id: 3
-            }
-        });
-        if (!user) {
-            res.status(404).json({ message: "User not found" });
-        } else {
-            res.status(200).json({ username: username });
-        }
-    } catch (err) {
-        res.status(500).json({ message: err });
-    }
 });
 
 function omitHash(user) {

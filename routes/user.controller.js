@@ -9,10 +9,9 @@ const {
     forgetPasswordRequester,
     forgetPasswordDriver,
     forgetPasswordAdmin,
-    checkExistedRequester,
-    checkExistedDriver,
-    checkExistedAdmin,
-    updatePersonalProfile
+    checkExistedUser,
+    updatePersonalProfile,
+    saveSetting
 } = require("../services/user.service");
 
 const router = express.Router();
@@ -24,10 +23,9 @@ router.post("/signup_requester", signUpRequester);
 router.post("/signup_driver", signUpDriver);
 router.put("/:userId/profile", updatePersonalProfile);
 router.put("/requesters/forget_password", forgetPasswordRequester);
+router.put("/setting", saveSetting);
 router.put("/drivers/forget_password", forgetPasswordDriver);
 router.put("/admins/forget_password", forgetPasswordAdmin);
-router.get("/check_exist", checkExistedRequester);
-router.get("/drivers/check_exist", checkExistedDriver);
-router.get("/admins/check_exist", checkExistedAdmin);
+router.get("/check_exist", checkExistedUser);
 
 module.exports = router;
