@@ -39,7 +39,7 @@ exports.dispatchRequestToDrivers = async (requestId, drivers = []) => {
         const driverDocumentRef = driverCollectionRef.doc(d.id);
 
         batch.update(driverDocumentRef, {
-            request: firebase.firestore.FieldValue.arrayUnion(requestId)
+            requestIds: firebase.firestore.FieldValue.arrayUnion(requestId)
         });
     });
 
