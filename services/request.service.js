@@ -8,8 +8,8 @@ const { pushEvent, popEvent } = require("./dispatcher.service");
 const { acceptRequest, updateRequestStatus } = require("../configs/firebase.config");
 
 exports.saveRequest = asyncHandler(async (request, response) => {
-    const { latitude, longitude, isEmergency } = request.body;
-    const req = await model.Request.create(request.body);
+    const _request = request.body;
+    const req = await model.Request.create(_request);
     const userId = request.params.userId;
 
     await req.setStatus(Constant.PROCESSING_REQUEST_STATUS);
@@ -18,11 +18,12 @@ exports.saveRequest = asyncHandler(async (request, response) => {
         type: QueryTypes.UPDATE,
         replacements: { userId }
     });
+
     pushEvent({
         requestId: req.id,
-        latitude,
-        longitude,
-        type: isEmergency ? "emergency" : "home"
+        latitude: _request.latitude,
+        longitude: _request.longitude,
+        type: _request.isEmergency ? "emergency" : "home"
     });
 
     response.status(201).json(req.id);

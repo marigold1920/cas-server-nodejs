@@ -10,7 +10,7 @@ let drivers = new Map();
 
 let config = {
     radius: 100,
-    extraRadius: 15,
+    extraRadius: 10,
     numOfDrivers: 10,
     requestTimeout: 10,
     maxRadius: 200
@@ -25,10 +25,10 @@ const handleRequest = async (requestId, latitude, longitude, type) => {
         radius = Math.min(radius + extraRadius, maxRadius);
         backupRadiuses.set(requestId, radius);
         handleRequest(requestId, latitude, longitude, type);
-    } else {
-        dispatchRequest(requestId, result);
-        drivers.set(requestId, result);
+        return;
     }
+    dispatchRequest(requestId, result);
+    drivers.set(requestId, result);
 };
 
 const dispatchRequest = (requestId, list) => {
