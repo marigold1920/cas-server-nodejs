@@ -34,7 +34,7 @@ exports.findAmbulance = asyncHandler(async (request, response) => {
     const driverId = request.params.driverId;
     const ambulance = await model.Ambulance.findOne({
         attributes: {
-            exclude: ["driver_id", "ambulance_status", "expirationDate"]
+            exclude: ["driver_id", "expirationDate"]
         },
         where: {
             driver_id: driverId,

@@ -8,7 +8,7 @@ const {
     driverHistory,
     getAllRequestsAndPaging,
     getRequestDetails,
-    getRequestById,
+    getRequests,
     getInfoDriver,
     finishRequest,
     pickUpPatient,
@@ -23,10 +23,10 @@ router.route("/requester/requests/:userId").post(saveRequest);
 router.get("/requester/requests/:requestId", getInfoDriver);
 router.put("/requester/requests/:requestId", feedbackRequest);
 router.put("/requester/requests/cancel/:requestId", cancelRequest);
-router.put("/driver/:driverId/requests/:requestId", acceptRequest);
+router.put("/driver/:driverId/requests", acceptRequest);
 router.get("/driver/history/details/:requestId", driverHistoryDetails);
 router.get("/driver/:userId/requests/history", driverHistory);
-router.get("/driver/requests/:requestId", getRequestById);
+router.get("/driver/requests", getRequests);
 router.put("/driver/requests/finish/:requestId", finishRequest);
 router.put("/driver/requests/pickup/:requestId", pickUpPatient);
 router.put("/driver/requests/cancel", rejectRequest);

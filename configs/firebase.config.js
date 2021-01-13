@@ -60,3 +60,18 @@ exports.removeRequestFromDrivers = async (requestId, drivers = []) => {
 
     await batch.commit();
 };
+
+exports.acceptRequest = async (username, requestId) => {
+    const driverCollectionRef = firestore.collection("requests").doc(`${requestId}`);
+
+    await driverCollectionRef.update({
+        poolId: username,
+        status: "accepted"
+    });
+};
+
+exports.updateRequestStatus = async (requestId, status) => {
+    const requestRef = firestore.collection("requests").doc(`${requestId}`);
+
+    await requestRef.update({ status });
+};

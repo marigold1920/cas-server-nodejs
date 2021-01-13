@@ -5,6 +5,7 @@ const queries = require("../configs/database.queries");
 const Constant = require("../utils/constants");
 const { QueryTypes } = require("sequelize");
 const { pushEvent, popEvent } = require("./dispatcher.service");
+const { acceptRequest, updateRequestStatus } = require("../configs/firebase.config");
 
 exports.saveRequest = asyncHandler(async (request, response) => {
     const { latitude, longitude, isEmergency } = request.body;
@@ -28,11 +29,24 @@ exports.saveRequest = asyncHandler(async (request, response) => {
 });
 
 exports.acceptRequest = asyncHandler(async (request, response) => {
-    const { driverId, requestId } = request.params;
+    const { driverId } = request.params;
+    const { requestId, username } = request.query;
+
+    const _request = await model.Request.findOne({ where: { id: requestId } });
+
+    if (!_request) {
+        response.status(400).json();
+        return;
+    }
+
     const ambulance = await model.Ambulance.findOne({
         where: { driver_id: driverId, ambulance_status: Constant.ACTIVE_AMBULANCE_STATUS }
     });
-    const _request = await model.Request.findByPk(requestId);
+
+    if (!ambulance) {
+        response.status(400).json();
+        return;
+    }
 
     await _request.setDriver(driverId);
     await _request.setAmbulance(ambulance);
@@ -40,6 +54,8 @@ exports.acceptRequest = asyncHandler(async (request, response) => {
         type: QueryTypes.UPDATE,
         replacements: { userId: driverId }
     });
+    acceptRequest(username, requestId);
+    popEvent(requestId, username);
 
     response.status(200).json();
 });
@@ -172,9 +188,9 @@ exports.getRequestDetails = asyncHandler(async (request, response) => {
     response.status(200).json(_request);
 });
 
-exports.getRequestById = asyncHandler(async (request, response) => {
-    const requestId = request.params.requestId;
-    const _request = await model.Request.findByPk(requestId, {
+exports.getRequests = asyncHandler(async (request, response) => {
+    const requestIds = request.query.requestId;
+    const _request = await model.Request.findAll({
         attributes: [
             ["id", "requestId"],
             "pickUp",
@@ -191,7 +207,8 @@ exports.getRequestById = asyncHandler(async (request, response) => {
             model: model.User,
             as: "requester",
             attributes: ["displayName", "phone"]
-        }
+        },
+        where: { id: requestIds }
     });
 
     response.status(200).json(_request);
@@ -219,11 +236,12 @@ exports.getInfoDriver = asyncHandler(async (request, response) => {
 });
 
 exports.finishRequest = asyncHandler(async (request, response) => {
+    const requestId = request.params.requestId;
     const current = new Date();
-    const req = await model.Request.findByPk(request.params.requestId);
+    const req = await model.Request.findByPk(requestId);
     const destination = {
         ...req.destination,
-        date: current.toLocaleDateString('vi-VN'),
+        date: current.toLocaleDateString("vi-VN"),
         time: `${String(current.getHours()).padStart(2, "0")}:${String(
             current.getMinutes()
         ).padStart(2, "0")}`
@@ -238,22 +256,25 @@ exports.finishRequest = asyncHandler(async (request, response) => {
         type: QueryTypes.UPDATE,
         replacements: { userId: req.requester_id }
     });
+    updateRequestStatus(requestId, Constant.FINISHED_REQUEST_STATUS);
 
     response.status(200).json();
 });
 
 exports.pickUpPatient = asyncHandler(async (request, response) => {
+    const requestId = request.params.requestId;
     const current = new Date();
-    const req = await model.Request.findByPk(request.params.requestId);
+    const req = await model.Request.findByPk(requestId);
     const pickUp = {
         ...req.pickUp,
-        date: current.toLocaleDateString('vi-VN'),
+        date: current.toLocaleDateString("vi-VN"),
         time: `${String(current.getHours()).padStart(2, "0")}:${String(
             current.getMinutes()
         ).padStart(2, "0")}`
     };
 
     await req.update({ pickUp: pickUp });
+    updateRequestStatus(requestId, Constant.PICKED_PATIENT_STATUS);
 
     response.status(200).json();
 });

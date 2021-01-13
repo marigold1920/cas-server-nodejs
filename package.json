@@ -5,7 +5,8 @@
     "main": "server.js",
     "scripts": {
         "test": "NODE_ENV=production node server",
-        "dev": "nodemon server"
+        "dev": "nodemon server",
+        "start": "node server.js"
     },
     "keywords": [],
     "author": "Victor Nguyễn",
@@ -23,5 +24,8 @@
         "mysql2": "^2.2.5",
         "nodemon": "^2.0.6",
         "sequelize": "^6.3.5"
+    },
+    "engines": {
+        "node": "14.15.4"
     }
 }
