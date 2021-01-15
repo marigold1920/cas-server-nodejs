@@ -9,6 +9,10 @@ const { acceptRequest, updateRequestStatus } = require("../configs/firebase.conf
 
 exports.saveRequest = asyncHandler(async (request, response) => {
     const _request = request.body;
+    const {
+        pickUp: { latitude, longitude },
+        isEmergency
+    } = _request;
     const req = await model.Request.create(_request);
     const userId = request.params.userId;
 
@@ -21,9 +25,9 @@ exports.saveRequest = asyncHandler(async (request, response) => {
 
     pushEvent({
         requestId: req.id,
-        latitude: _request.latitude,
-        longitude: _request.longitude,
-        type: _request.isEmergency ? "emergency" : "home"
+        latitude,
+        longitude,
+        type: isEmergency ? "emergency" : "home"
     });
 
     response.status(201).json(req.id);
@@ -56,7 +60,7 @@ exports.acceptRequest = asyncHandler(async (request, response) => {
         replacements: { userId: driverId }
     });
     acceptRequest(username, requestId);
-    popEvent(requestId, username);
+    popEvent(Number.parseInt(requestId));
 
     response.status(200).json();
 });
@@ -280,7 +284,7 @@ exports.pickUpPatient = asyncHandler(async (request, response) => {
     response.status(200).json();
 });
 
-exports.cancelRequest = asyncHandler(async (request, response) => {
+exports.cancelRequestRequester = asyncHandler(async (request, response) => {
     const requestId = Number.parseInt(request.params.requestId);
     await model.Request.update(
         {
@@ -294,7 +298,7 @@ exports.cancelRequest = asyncHandler(async (request, response) => {
     response.status(200).json(requestId);
 });
 
-exports.rejectRequest = asyncHandler(async (request, response) => {
+exports.cancelRequestDriver = asyncHandler(async (request, response) => {
     const { requestId, reason } = request.body;
 
     await model.Request.update(

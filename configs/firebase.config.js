@@ -46,7 +46,7 @@ exports.dispatchRequestToDrivers = async (requestId, drivers = []) => {
     await batch.commit();
 };
 
-exports.removeRequestFromDrivers = async (requestId, drivers = []) => {
+exports.removeRequestFromDrivers = async (requestId, drivers) => {
     const batch = firestore.batch();
     const driverCollectionRef = firestore.collection("confirmations");
 
@@ -54,7 +54,7 @@ exports.removeRequestFromDrivers = async (requestId, drivers = []) => {
         const driverDocumentRef = driverCollectionRef.doc(d.id);
 
         batch.update(driverDocumentRef, {
-            request: firebase.firestore.FieldValue.arrayRemove(requestId)
+            requestIds: firebase.firestore.FieldValue.arrayRemove(requestId)
         });
     });
 
@@ -74,4 +74,12 @@ exports.updateRequestStatus = async (requestId, status) => {
     const requestRef = firestore.collection("requests").doc(`${requestId}`);
 
     await requestRef.update({ status });
+};
+
+exports.createRequest = async requestId => {
+    const requestRef = firestore.collection("requests").doc(`${requestId}`);
+
+    await requestRef.set({
+        status: "processing"
+    });
 };

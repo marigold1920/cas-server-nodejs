@@ -12,8 +12,8 @@ const {
     getInfoDriver,
     finishRequest,
     pickUpPatient,
-    cancelRequest,
-    rejectRequest,
+    cancelRequestRequester,
+    cancelRequestDriver,
     feedbackRequest
 } = require("../services/request.service");
 
@@ -22,14 +22,14 @@ const router = express.Router();
 router.route("/requester/requests/:userId").post(saveRequest);
 router.get("/requester/requests/:requestId", getInfoDriver);
 router.put("/requester/requests/:requestId", feedbackRequest);
-router.put("/requester/requests/cancel/:requestId", cancelRequest);
+router.put("/requester/requests/cancel/:requestId", cancelRequestRequester);
 router.put("/driver/:driverId/requests", acceptRequest);
 router.get("/driver/history/details/:requestId", driverHistoryDetails);
 router.get("/driver/:userId/requests/history", driverHistory);
 router.get("/driver/requests", getRequests);
 router.put("/driver/requests/finish/:requestId", finishRequest);
 router.put("/driver/requests/pickup/:requestId", pickUpPatient);
-router.put("/driver/requests/cancel", rejectRequest);
+router.put("/driver/requests/cancel", cancelRequestDriver);
 router.get("/admin/requests", getAllRequestsAndPaging);
 router.get("/admin/requests/details/:requestId", getRequestDetails);
 router.get("/requests/history/:userId", history);

@@ -1,12 +1,14 @@
 const {
     findDrivers,
     dispatchRequestToDrivers,
-    removeRequestFromDrivers
+    removeRequestFromDrivers,
+    createRequest
 } = require("../configs/firebase.config");
 
 let backupRadiuses = new Map();
 let pendingEvents = new Map();
 let drivers = new Map();
+let blackList = new Map();
 
 let config = {
     radius: 100,
@@ -53,6 +55,7 @@ const assignTask = (requestId, latitude, longitude, type) => {
 exports.pushEvent = request => {
     const { requestId, latitude, longitude, type } = request;
 
+    createRequest(requestId);
     handleRequest(requestId, latitude, longitude, type);
     assignTask(requestId, latitude, longitude, type);
 };
@@ -63,6 +66,17 @@ exports.popEvent = requestId => {
     pendingEvents.delete(requestId);
     drivers.delete(requestId);
     backupRadiuses.delete(requestId);
+    blackList.delete(requestId);
+};
+
+exports.addToBlacList = (requestId, username) => {
+    const list = blackList.get(requestId) || [];
+
+    list.push(username);
+    removeRequestFromDrivers(requestId, [username]);
+    // if (list.length = drivers.get(requestId).length) {
+
+    // }
 };
 
 exports.updateConfig = newConfig => {
