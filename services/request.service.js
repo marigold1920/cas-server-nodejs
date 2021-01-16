@@ -4,7 +4,7 @@ const asyncHandler = require("../middlewares/asyncHandler");
 const queries = require("../configs/database.queries");
 const Constant = require("../utils/constants");
 const { QueryTypes } = require("sequelize");
-const { pushEvent, popEvent } = require("./dispatcher.service");
+const { pushEvent, popEvent, addToBlackList } = require("./dispatcher.service");
 const { acceptRequest, updateRequestStatus } = require("../configs/firebase.config");
 
 exports.saveRequest = asyncHandler(async (request, response) => {
@@ -200,6 +200,8 @@ exports.getRequests = asyncHandler(async (request, response) => {
             ["id", "requestId"],
             "pickUp",
             "destination",
+            ["created_date", "createdDate"],
+            ["created_time", "createdTime"],
             "patientName",
             "patientPhone",
             "morbidity",
@@ -314,6 +316,14 @@ exports.cancelRequestDriver = asyncHandler(async (request, response) => {
     });
 
     response.status(200).json(requestId);
+});
+
+exports.rejectRequest = asyncHandler(async (request, response) => {
+    const { requestId, username } = request.query;
+
+    addToBlackList(Number.parseInt(requestId), username);
+
+    response.status(200).json();
 });
 
 exports.feedbackRequest = asyncHandler(async (request, response) => {

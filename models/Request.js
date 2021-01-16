@@ -1,6 +1,6 @@
 const sequelize = require("../configs/database.config");
 const { DataTypes } = require("sequelize");
-var moment = require('moment');
+var moment = require("moment");
 
 const Request = sequelize.define(
     "request",
@@ -28,10 +28,12 @@ const Request = sequelize.define(
         createdDate: {
             type: DataTypes.DATEONLY,
             defaultValue: new Date(),
-            field: "created_date",
-            get: function() {
-                return moment(this.getDataValue('createdDate')).format('DD/MM/YYYY');
-            }
+            field: "created_date"
+        },
+        createdTime: {
+            type: DataTypes.STRING,
+            field: "created_time",
+            defaultValue: new Date().toLocaleTimeString("vi-VN")
         },
         morbidity: {
             type: DataTypes.STRING

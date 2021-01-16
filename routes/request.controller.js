@@ -14,6 +14,7 @@ const {
     pickUpPatient,
     cancelRequestRequester,
     cancelRequestDriver,
+    rejectRequest,
     feedbackRequest
 } = require("../services/request.service");
 
@@ -27,6 +28,7 @@ router.put("/driver/:driverId/requests", acceptRequest);
 router.get("/driver/history/details/:requestId", driverHistoryDetails);
 router.get("/driver/:userId/requests/history", driverHistory);
 router.get("/driver/requests", getRequests);
+router.put("/driver/request/reject", rejectRequest);
 router.put("/driver/requests/finish/:requestId", finishRequest);
 router.put("/driver/requests/pickup/:requestId", pickUpPatient);
 router.put("/driver/requests/cancel", cancelRequestDriver);
