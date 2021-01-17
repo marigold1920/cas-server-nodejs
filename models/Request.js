@@ -32,8 +32,7 @@ const Request = sequelize.define(
         },
         createdTime: {
             type: DataTypes.STRING,
-            field: "created_time",
-            defaultValue: new Date().toLocaleTimeString("vi-VN")
+            field: "created_time"
         },
         morbidity: {
             type: DataTypes.STRING

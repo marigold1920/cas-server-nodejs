@@ -13,7 +13,10 @@ exports.saveRequest = asyncHandler(async (request, response) => {
         pickUp: { latitude, longitude },
         isEmergency
     } = _request;
-    const req = await model.Request.create(_request);
+    const req = await model.Request.create({
+        ..._request,
+        createdTime: new Date().toLocaleTimeString("vi-VN")
+    });
     const userId = request.params.userId;
 
     await req.setStatus(Constant.PROCESSING_REQUEST_STATUS);
