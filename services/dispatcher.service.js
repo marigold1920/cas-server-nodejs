@@ -2,6 +2,7 @@ const {
     findDrivers,
     dispatchRequestToDrivers,
     removeRequestFromDrivers,
+    removeAllRequestFromDrivers,
     createRequest
 } = require("../configs/firebase.config");
 
@@ -57,7 +58,7 @@ const handleRequest = async ({ requestId, latitude, longitude, type }) => {
 
     // Dispatch request when having new drivers
     if (difference.length) {
-        dispatchRequestToDrivers(requestId, difference); // Send request to confirmations pool in Firestore, see change in "requestIds"
+        dispatchRequestToDrivers(Number.parseInt(requestId), difference); // Send request to confirmations pool in Firestore, see change in "requestIds"
         drivers.set(requestId, result); // Backup driver list to compare in next term
     }
 
@@ -131,21 +132,25 @@ exports.popEvent = requestId => {
  * @param {*} requestId Identifier of scheduler event.
  * @param {*} username Driver who rejected the request.
  */
-exports.addToBlackList = (requestId, username) => {
-    const list = blackList.get(requestId) || [];
+exports.addToBlackList = (requestIds, username) => {
+    (requestIds.length > 1 && removeAllRequestFromDrivers(username)) ||
+        removeRequestFromDrivers(Number.parseInt(requestIds[0]), [username]);
 
-    list.push(username);
-    removeRequestFromDrivers(requestId, [username]);
-    // Find new drivers when all drivers rejected the request
-    if (list.length == drivers.get(requestId).length) {
-        const data = eventData.get(requestId);
-        let task = pendingEvents.get(requestId);
+    requestIds.forEach(requestId => {
+        const list = blackList.get(requestId) || [];
 
-        clearInterval(task); // Destroy old event
-        handleRequest(data);
-        assignTask(data); // Re-assign event
-    }
-    blackList.set(requestId, list); // Update black list
+        list.push(username);
+        // Find new drivers when all drivers rejected the request
+        if (list.length == drivers.get(requestId).length) {
+            const data = eventData.get(requestId);
+            let task = pendingEvents.get(requestId);
+
+            clearInterval(task); // Destroy old event
+            handleRequest(data);
+            assignTask(data); // Re-assign event
+        }
+        blackList.set(requestId, list); // Update black list
+    });
 };
 
 exports.updateConfig = newConfig => {

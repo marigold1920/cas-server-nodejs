@@ -27,7 +27,7 @@ exports.saveRequest = asyncHandler(async (request, response) => {
     });
 
     pushEvent({
-        requestId: req.id,
+        requestId: String(req.id),
         latitude,
         longitude,
         type: isEmergency ? "emergency" : "home"
@@ -63,7 +63,7 @@ exports.acceptRequest = asyncHandler(async (request, response) => {
         replacements: { userId: driverId }
     });
     acceptRequest(username, requestId);
-    popEvent(Number.parseInt(requestId));
+    popEvent(requestId);
 
     response.status(200).json();
 });
@@ -290,7 +290,7 @@ exports.pickUpPatient = asyncHandler(async (request, response) => {
 });
 
 exports.cancelRequestRequester = asyncHandler(async (request, response) => {
-    const requestId = Number.parseInt(request.params.requestId);
+    const requestId = request.params.requestId;
     await model.Request.update(
         {
             request_status: Constant.CANCELED_REQUEST_STATUS,
@@ -324,7 +324,7 @@ exports.cancelRequestDriver = asyncHandler(async (request, response) => {
 exports.rejectRequest = asyncHandler(async (request, response) => {
     const { requestId, username } = request.query;
 
-    addToBlackList(Number.parseInt(requestId), username);
+    addToBlackList([].concat(requestId), username);
 
     response.status(200).json();
 });
