@@ -118,7 +118,7 @@ exports.pushEvent = request => {
  * @param {*} requestId Identifier of scheduler event.
  */
 exports.popEvent = requestId => {
-    removeRequestFromDrivers(requestId, drivers.get(requestId));
+    removeRequestFromDrivers(Number.parseInt(requestId), drivers.get(requestId));
     clearInterval(pendingEvents.get(requestId));
     pendingEvents.delete(requestId);
     drivers.delete(requestId);

@@ -8,6 +8,7 @@ const { pushEvent, popEvent, addToBlackList } = require("./dispatcher.service");
 const { acceptRequest, updateRequestStatus } = require("../configs/firebase.config");
 
 exports.saveRequest = asyncHandler(async (request, response) => {
+    const current = new Date();
     const _request = request.body;
     const {
         pickUp: { latitude, longitude },
@@ -15,7 +16,8 @@ exports.saveRequest = asyncHandler(async (request, response) => {
     } = _request;
     const req = await model.Request.create({
         ..._request,
-        createdTime: new Date().toLocaleTimeString("vi-VN")
+        createdTime: current.toLocaleTimeString("vi-VN"),
+        createdDate: current
     });
     const userId = request.params.userId;
 
@@ -113,9 +115,10 @@ exports.historyDetails = asyncHandler(async (request, response) => {
     response.status(200).json(_request);
 });
 
-exports.driverHistoryDetails = asyncHandler(async (request, response) => {
-    const requestId = request.params.requestId;
-    const _request = await model.Request.findByPk(requestId, {
+exports.driverHistory = asyncHandler(async (request, response) => {
+    const userId = request.params.userId;
+    const pageIndex = request.query.pageIndex;
+    const history = await model.Request.findAll({
         attributes: {
             exclude: [
                 "driver_id",
@@ -123,8 +126,7 @@ exports.driverHistoryDetails = asyncHandler(async (request, response) => {
                 "ambulance_id",
                 "region",
                 "createdDate",
-                "healthInformation",
-                "isOther"
+                "healthInformation"
             ]
         },
         include: [
@@ -133,22 +135,11 @@ exports.driverHistoryDetails = asyncHandler(async (request, response) => {
                 as: "requester",
                 attributes: ["displayName", "imageUrl", "phone"]
             }
-        ]
-    });
-
-    response.status(200).json(_request);
-});
-
-exports.driverHistory = asyncHandler(async (request, response) => {
-    const userId = request.params.userId;
-    const pageIndex = request.query.pageIndex;
-    const history = await sequelize.query(queries.getDriverHistory, {
-        type: QueryTypes.SELECT,
-        replacements: {
-            userId,
-            offset: (pageIndex - 1) * Constant.PAGE_SIZE,
-            pageSize: Constant.PAGE_SIZE
-        }
+        ],
+        where: { driver_id: userId },
+        offset: (pageIndex - 1) * Constant.PAGE_SIZE,
+        limit: Constant.PAGE_SIZE,
+        order: [["id", "DESC"]]
     });
 
     response.status(200).json(history);

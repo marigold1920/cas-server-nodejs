@@ -4,7 +4,6 @@ const {
     acceptRequest,
     history,
     historyDetails,
-    driverHistoryDetails,
     driverHistory,
     getAllRequestsAndPaging,
     getRequestDetails,
@@ -25,7 +24,6 @@ router.get("/requester/requests/:requestId", getInfoDriver);
 router.put("/requester/requests/:requestId", feedbackRequest);
 router.put("/requester/requests/cancel/:requestId", cancelRequestRequester);
 router.put("/driver/:driverId/requests", acceptRequest);
-router.get("/driver/history/details/:requestId", driverHistoryDetails);
 router.get("/driver/:userId/requests/history", driverHistory);
 router.get("/driver/requests", getRequests);
 router.put("/driver/requests/reject", rejectRequest);

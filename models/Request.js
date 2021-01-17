@@ -27,7 +27,6 @@ const Request = sequelize.define(
         },
         createdDate: {
             type: DataTypes.DATEONLY,
-            defaultValue: new Date(),
             field: "created_date"
         },
         createdTime: {
