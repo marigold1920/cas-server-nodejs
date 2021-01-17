@@ -53,7 +53,7 @@ const handleRequest = async ({ requestId, latitude, longitude, type }) => {
     let radius = backupRadiuses.get(requestId) || config.radius;
     const { extraRadius, maxRadius } = config;
     const result = await findDrivers(latitude, longitude, radius, type);
-    const difference = findDifference(result); // Compare new list and the previous list to find new drivers
+    const difference = findDifference(requestId, result); // Compare new list and the previous list to find new drivers
 
     // Dispatch request when having new drivers
     if (difference.length) {
@@ -75,7 +75,7 @@ const handleRequest = async ({ requestId, latitude, longitude, type }) => {
  * @description Find new drivers from previous list.
  * @param {*} list Driver list of current term.
  */
-const findDifference = list => {
+const findDifference = (requestId, list) => {
     const preDrivers = drivers.get(requestId) || [];
 
     return (preDrivers.length && list.filter(d => !preDrivers.some(pd => pd === d))) || list;
@@ -88,7 +88,6 @@ const findDifference = list => {
  * @param {*} request an object is passed to assign new task.
  */
 const assignTask = ({ requestId, latitude, longitude, type }) => {
-    console.log(latitude, longitude);
     const { radius, requestTimeout } = config;
     const task = setInterval(
         () => handleRequest({ requestId, latitude, longitude, type }),
