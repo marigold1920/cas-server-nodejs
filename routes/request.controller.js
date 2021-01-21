@@ -3,7 +3,6 @@ const {
     saveRequest,
     acceptRequest,
     history,
-    historyDetails,
     driverHistory,
     getAllRequestsAndPaging,
     getRequestDetails,
@@ -21,6 +20,7 @@ const router = express.Router();
 
 router.route("/requester/requests/:userId").post(saveRequest);
 router.get("/requester/requests/:requestId", getInfoDriver);
+router.get("/requester/:userId/requests/history", history);
 router.put("/requester/requests/:requestId", feedbackRequest);
 router.put("/requester/requests/cancel/:requestId", cancelRequestRequester);
 router.put("/driver/:driverId/requests", acceptRequest);
@@ -32,7 +32,5 @@ router.put("/driver/requests/pickup/:requestId", pickUpPatient);
 router.put("/driver/requests/cancel", cancelRequestDriver);
 router.get("/admin/requests", getAllRequestsAndPaging);
 router.get("/admin/requests/details/:requestId", getRequestDetails);
-router.get("/requests/history/:userId", history);
-router.get("/requests/history/details/:requestId", historyDetails);
 
 module.exports = router;

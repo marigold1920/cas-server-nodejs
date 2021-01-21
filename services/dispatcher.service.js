@@ -39,8 +39,8 @@ let drivers = new Map();
 let blackList = new Map();
 
 let config = {
-    radius: 50,
-    extraRadius: 10,
+    radius: 20,
+    extraRadius: 5,
     numOfDrivers: 10,
     requestTimeout: 1,
     maxRadius: 200
@@ -92,7 +92,7 @@ const assignTask = ({ requestId, latitude, longitude, type }) => {
     const { radius, requestTimeout } = config;
     const task = setInterval(
         () => handleRequest({ requestId, latitude, longitude, type }),
-        requestTimeout * 60 * 1000
+        requestTimeout * 30 * 1000
     );
 
     backupRadiuses.set(requestId, radius);

@@ -73,21 +73,7 @@ exports.acceptRequest = asyncHandler(async (request, response) => {
 exports.history = asyncHandler(async (request, response) => {
     const userId = request.params.userId;
     const pageIndex = request.query.pageIndex;
-    const history = await sequelize.query(queries.getRequesterHistory, {
-        type: QueryTypes.SELECT,
-        replacements: {
-            userId,
-            offset: (pageIndex - 1) * Constant.PAGE_SIZE,
-            pageSize: Constant.PAGE_SIZE
-        }
-    });
-
-    response.status(200).json(history);
-});
-
-exports.historyDetails = asyncHandler(async (request, response) => {
-    const requestId = request.params.requestId;
-    const _request = await model.Request.findByPk(requestId, {
+    const history = await model.Request.findAll({
         attributes: {
             exclude: [
                 "driver_id",
@@ -95,7 +81,7 @@ exports.historyDetails = asyncHandler(async (request, response) => {
                 "ambulance_id",
                 "region",
                 "createdDate",
-                "isOther"
+                "healthInformation"
             ]
         },
         include: [
@@ -109,10 +95,14 @@ exports.historyDetails = asyncHandler(async (request, response) => {
                 as: "ambulance",
                 attributes: ["licensePlate"]
             }
-        ]
+        ],
+        where: { requester_id: userId },
+        offset: (pageIndex - 1) * Constant.PAGE_SIZE,
+        limit: Constant.PAGE_SIZE,
+        order: [["id", "DESC"]]
     });
 
-    response.status(200).json(_request);
+    response.status(200).json(history);
 });
 
 exports.driverHistory = asyncHandler(async (request, response) => {
