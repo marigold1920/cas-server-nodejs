@@ -57,19 +57,18 @@ exports.updateHealthInformation = asyncHandler(async (request, response) => {
 
 exports.grantRequesterPermission = asyncHandler(async (request, response) => {
     const userId = request.params.requesterId;
-    const requester = await model.User.findByPk(userId);
 
-    if (requester.isActive) {
-        const isInRequest = await sequelize.query(queries.isJoinInRequest, {
-            type: QueryTypes.SELECT,
-            replacements: { userId }
-        });
+    const isInRequest = await sequelize.query(queries.isJoinInRequest, {
+        type: QueryTypes.SELECT,
+        replacements: { userId }
+    });
 
-        if (isInRequest.length) {
-            response.status(400).json();
-            return;
-        }
+    if (isInRequest.length) {
+        response.status(400).json();
+        return;
     }
+
+    const requester = await model.User.findByPk(userId);
 
     await requester.update({ isActive: !requester.isActive });
 

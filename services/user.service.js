@@ -93,6 +93,7 @@ exports.authenticateDriver = asyncHandler(async (req, res) => {
 });
 
 exports.authenticateAdmin = asyncHandler(async (req, res) => {
+    console.log("Oops");
     const { username, password } = req.body;
     const user = await model.User.scope("withHash").findOne({
         where: {

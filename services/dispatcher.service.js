@@ -38,11 +38,14 @@ let drivers = new Map();
  */
 let blackList = new Map();
 
+let cleaner = new Map();
+
 let config = {
     radius: 20,
     extraRadius: 5,
     numOfDrivers: 10,
     requestTimeout: 1,
+    termTimeout: 1,
     maxRadius: 200
 };
 
@@ -89,14 +92,23 @@ const findDifference = (requestId, list) => {
  * @param {*} request an object is passed to assign new task.
  */
 const assignTask = ({ requestId, latitude, longitude, type }) => {
-    const { radius, requestTimeout } = config;
+    const { radius, termTimeout } = config;
     const task = setInterval(
         () => handleRequest({ requestId, latitude, longitude, type }),
-        requestTimeout * 30 * 1000
+        termTimeout * 25 * 1000
     );
 
     backupRadiuses.set(requestId, radius);
     pendingEvents.set(requestId, task);
+};
+
+const assignScheduler = requestId => {
+    const taksCleaner = setInterval(() => {
+        this.popEvent(requestId);
+        console.log("Event is destroyed!!!!!!!!!!!");
+    }, config.requestTimeout * 60 * 1000);
+
+    cleaner.set(requestId, taksCleaner);
 };
 
 /**
@@ -109,6 +121,7 @@ exports.pushEvent = request => {
 
     createRequest(requestId);
     handleRequest(request);
+    assignScheduler(requestId);
     assignTask(request);
     eventData.set(requestId, request);
 };
@@ -118,6 +131,10 @@ exports.pushEvent = request => {
  * @param {*} requestId Identifier of scheduler event.
  */
 exports.popEvent = requestId => {
+    const taskCleaner = cleaner.get(requestId);
+
+    taskCleaner && clearInterval(taskCleaner);
+
     removeRequestFromDrivers(Number.parseInt(requestId), drivers.get(requestId));
     clearInterval(pendingEvents.get(requestId));
     pendingEvents.delete(requestId);
@@ -125,6 +142,7 @@ exports.popEvent = requestId => {
     backupRadiuses.delete(requestId);
     blackList.delete(requestId);
     eventData.delete(requestId);
+    cleaner.delete(requestId);
 };
 
 /**

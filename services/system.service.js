@@ -11,7 +11,6 @@ exports.updateSystemConfiguration = asyncHandler(async (request, response) => {
     const configurations = request.body;
 
     for (let i in configurations) {
-        console.log(i);
         await model.Configuration.update(configurations[i], {
             where: { item_id: configurations[i].itemId }
         });

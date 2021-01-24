@@ -12,12 +12,12 @@ exports.getReport = asyncHandler(async (request, response) => {
         type: QueryTypes.SELECT,
         replacements: { startDate }
     });
+    const popularRegion = await sequelize.query(queries.getPopularRegion, {
+        type: QueryTypes.SELECT
+    });
     const ambulances = await sequelize.query(queries.findAllAmbulanceAndPaging, {
         type: QueryTypes.SELECT,
         replacements: { offset: 0, pageSize: 4, status: "%%", keyword: "%%" }
-    });
-    const popularRegion = await sequelize.query(queries.getPopularRegion, {
-        type: QueryTypes.SELECT
     });
     const successRate = await sequelize.query(queries.getSuccessRate, {
         type: QueryTypes.SELECT

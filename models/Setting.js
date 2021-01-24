@@ -9,6 +9,10 @@ const Setting = sequelize.define(
             field: "type_request",
             type: DataTypes.INTEGER,
             defaultValue: 6
+        },
+        currentAmbulance: {
+            type: DataTypes.JSON,
+            field: "current_ambulance"
         }
     },
     { freezeTableName: true, timestamps: false, initialAutoIncrement: 1 }

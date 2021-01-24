@@ -22,7 +22,7 @@ const Request = sequelize.define(
             field: "patient_phone"
         },
         healthInformation: {
-            type: DataTypes.JSON,
+            type: DataTypes.STRING,
             field: "health_information"
         },
         createdDate: {

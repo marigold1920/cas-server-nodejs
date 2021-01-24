@@ -69,7 +69,7 @@ exports.grantAmbulancePermission = asyncHandler(async (request, response) => {
     response.status(200).json(Constant[status]);
 });
 
-exports.acceptRegisterAmbulance = asyncHandler(async (request, response) => {
+exports.acceptRegistedAmbulance = asyncHandler(async (request, response) => {
     await model.Ambulance.update(
         {
             ambulance_status: Constant.ACTIVE_AMBULANCE_STATUS,
@@ -85,7 +85,7 @@ exports.acceptRegisterAmbulance = asyncHandler(async (request, response) => {
     response.status(200).json(Constant["ACTIVE"]);
 });
 
-exports.rejectRegisteAmbulance = asyncHandler(async (request, response) => {
+exports.rejectRegistedAmbulance = asyncHandler(async (request, response) => {
     await model.Ambulance.update(
         {
             note: request.body
