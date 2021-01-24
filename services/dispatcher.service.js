@@ -56,12 +56,13 @@ let config = {
 const handleRequest = async ({ requestId, latitude, longitude, type }) => {
     let radius = backupRadiuses.get(requestId) || config.radius;
     const { extraRadius, maxRadius } = config;
+    const oldList = drivers.get(requestId) || [];
     const result = await findDrivers(latitude, longitude, radius, type);
     const difference = findDifference(requestId, result); // Compare new list and the previous list to find new drivers
 
     // Dispatch request when having new drivers
     if (difference.length) {
-        dispatchRequestToDrivers(Number.parseInt(requestId), difference); // Send request to confirmations pool in Firestore, see change in "requestIds"
+        dispatchRequestToDrivers(Number.parseInt(requestId), oldList.concat(difference)); // Send request to confirmations pool in Firestore, see change in "requestIds"
         drivers.set(requestId, result); // Backup driver list to compare in next term
     }
 
@@ -105,7 +106,6 @@ const assignTask = ({ requestId, latitude, longitude, type }) => {
 const assignScheduler = requestId => {
     const taksCleaner = setInterval(() => {
         this.popEvent(requestId);
-        console.log("Event is destroyed!!!!!!!!!!!");
     }, config.requestTimeout * 60 * 1000);
 
     cleaner.set(requestId, taksCleaner);

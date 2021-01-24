@@ -66,7 +66,8 @@ exports.authenticateRequester = asyncHandler(async (req, res) => {
     const user = await model.User.scope("withHash").findOne({
         where: {
             username: username,
-            role_id: 1
+            role_id: 1,
+            isActive: true
         }
     });
     if (!user || !(await bcrypt.compare(password, user.password)))
@@ -81,7 +82,8 @@ exports.authenticateDriver = asyncHandler(async (req, res) => {
     const user = await model.User.scope("withHash").findOne({
         where: {
             username: username,
-            role_id: 2
+            role_id: 2,
+            isActive: true
         }
     });
     const setting = await model.Setting.findOne({ where: { user_id: user.id } });
@@ -98,7 +100,8 @@ exports.authenticateAdmin = asyncHandler(async (req, res) => {
     const user = await model.User.scope("withHash").findOne({
         where: {
             username: username,
-            role_id: 3
+            role_id: 3,
+            isActive: true
         }
     });
     if (!user || !(await bcrypt.compare(password, user.password)))

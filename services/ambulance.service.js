@@ -27,7 +27,7 @@ exports.getAmbulanceDetails = asyncHandler(async (request, response) => {
         replacements: { ambulanceId: request.params.ambulanceId }
     });
 
-    response.status(200).json(ambulance);
+    response.status(200).json(ambulance[0]);
 });
 
 exports.findAmbulance = asyncHandler(async (request, response) => {
