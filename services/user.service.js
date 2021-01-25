@@ -49,7 +49,6 @@ exports.signUpDriver = asyncHandler(async (req, res) => {
 
 exports.updatePersonalProfile = asyncHandler(async (request, response) => {
     const profile = request.body;
-    console.log(profile);
     const userId = request.params.userId;
 
     await model.User.update(profile, {

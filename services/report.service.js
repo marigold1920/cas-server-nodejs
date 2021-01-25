@@ -32,10 +32,12 @@ exports.getReport = asyncHandler(async (request, response) => {
         }, {});
 
     response.status(200).json({
-        recentlyRequests: requestReport,
-        successRate: successRate[0].rate,
-        configurations,
-        ambulances,
-        popularRegion: popularRegion[0].region
+        data: {
+            recentlyRequests: requestReport,
+            successRate: Number.parseInt(successRate[0].rate),
+            configurations,
+            ambulances,
+            popularRegion: popularRegion[0].region
+        }
     });
 });

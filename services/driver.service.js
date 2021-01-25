@@ -7,7 +7,16 @@ const model = require("../models/Model.master");
 const queries = require("../configs/database.queries");
 
 exports.getAllDriversAndPaging = asyncHandler(async (request, response) => {
-    const { pageIndex, keyword } = request.query;
+    const { pageIndex, keyword, status } = request.query;
+    const conditions = {
+        displayName: {
+            [Op.like]: `%${keyword}%`
+        },
+        is_active: {
+            [Op.like]: `%${status}%`
+        },
+        role_id: 2
+    };
     const drivers = await model.User.findAll({
         attributes: [
             "id",
@@ -21,15 +30,15 @@ exports.getAllDriversAndPaging = asyncHandler(async (request, response) => {
         ],
         limit: Constant.PAGE_SIZE,
         offset: (pageIndex - 1) * Constant.PAGE_SIZE,
-        where: {
-            displayName: {
-                [Op.like]: `%${keyword}%`
-            },
-            role_id: 2
-        }
+        where: conditions
     });
+    const count = await model.User.count({ where: conditions });
 
-    response.status(200).json(drivers);
+    response.status(200).json({
+        data: drivers,
+        totalPage: Math.ceil((count * 1.0) / Constant.PAGE_SIZE),
+        currentPage: Number.parseInt(pageIndex)
+    });
 });
 
 exports.getDriverDetails = asyncHandler(async (request, response) => {

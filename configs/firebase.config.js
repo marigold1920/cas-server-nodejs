@@ -93,3 +93,11 @@ exports.createRequest = async requestId => {
         status: "processing"
     });
 };
+
+exports.confirmRegisterAmbulance = async (username, status) => {
+    const documentRef = firestore.collection("drivers").doc(`${username}`);
+
+    await documentRef.update({
+        confirmationStatus: status
+    });
+};

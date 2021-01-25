@@ -3,7 +3,7 @@ const sequelize = require("../configs/database.config");
 const asyncHandler = require("../middlewares/asyncHandler");
 const queries = require("../configs/database.queries");
 const Constant = require("../utils/constants");
-const { QueryTypes } = require("sequelize");
+const { QueryTypes, Op } = require("sequelize");
 const { pushEvent, popEvent, addToBlackList } = require("./dispatcher.service");
 const { acceptRequest, updateRequestStatus } = require("../configs/firebase.config");
 
@@ -146,8 +146,19 @@ exports.getAllRequestsAndPaging = asyncHandler(async (request, response) => {
             pageSize: Constant.PAGE_SIZE
         }
     });
+    const count = await sequelize.query(queries.countRequests, {
+        type: QueryTypes.SELECT,
+        replacements: {
+            keyword: `%${keyword}%`,
+            status: `%${status}%`
+        }
+    });
 
-    response.status(200).json(requests);
+    response.status(200).json({
+        data: requests,
+        totalPage: Math.ceil((count[0].count / Constant.PAGE_SIZE) * 1.0),
+        currentPage: Number.parseInt(pageIndex)
+    });
 });
 
 exports.getRequestDetails = asyncHandler(async (request, response) => {
@@ -171,6 +182,11 @@ exports.getRequestDetails = asyncHandler(async (request, response) => {
                 model: model.Ambulance,
                 as: "ambulance",
                 attributes: ["licensePlate"]
+            },
+            {
+                model: model.RequestStatus,
+                as: "status",
+                attributes: ["name"]
             }
         ]
     });

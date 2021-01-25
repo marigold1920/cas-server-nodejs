@@ -4,6 +4,7 @@ const sequelize = require("../configs/database.config");
 const queries = require("../configs/database.queries");
 const Constant = require("../utils/constants");
 const { QueryTypes } = require("sequelize");
+const { confirmRegisterAmbulance } = require("../configs/firebase.config");
 
 exports.findAllAmbulancesAndPaging = asyncHandler(async (request, response) => {
     const { pageIndex, keyword, status } = request.query;
@@ -17,8 +18,19 @@ exports.findAllAmbulancesAndPaging = asyncHandler(async (request, response) => {
             keyword: `%${keyword}%`
         }
     });
+    const count = await sequelize.query(queries.countAmbulances, {
+        type: QueryTypes.SELECT,
+        replacements: {
+            status: `%${status}%`,
+            keyword: `%${keyword}%`
+        }
+    });
 
-    response.status(200).json(ambulances);
+    response.status(200).json({
+        data: ambulances,
+        totalPage: Math.ceil((count[0].count * 1.0) / Constant.PAGE_SIZE),
+        currentPage: pageIndex
+    });
 });
 
 exports.getAmbulanceDetails = asyncHandler(async (request, response) => {
@@ -81,6 +93,7 @@ exports.acceptRegistedAmbulance = asyncHandler(async (request, response) => {
             }
         }
     );
+    confirmRegisterAmbulance(request.query.username, Constant.APPROVE_REGISTER_AMBULANCE);
 
     response.status(200).json(Constant["ACTIVE"]);
 });
@@ -96,6 +109,16 @@ exports.rejectRegistedAmbulance = asyncHandler(async (request, response) => {
             }
         }
     );
+    confirmRegisterAmbulance(request.query.username, Constant.REJECT_REGISTER_AMBULANCE);
 
     response.status(200).json(Constant["CONFIRMING"]);
+});
+
+exports.checkIsRegistered = asyncHandler(async (request, response) => {
+    const ambulance = await sequelize.query(queries.checkIsRegistered, {
+        type: QueryTypes.SELECT,
+        replacements: { licensePlate: request.params.licensePlate }
+    });
+
+    response.status(200).json(ambulance.length);
 });

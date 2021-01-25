@@ -14,5 +14,7 @@ module.exports = {
     ACTIVE: "Đang hoạt động",
     DEACTIVE: "Ngưng hoạt động",
     CONFIRMING: "Chờ xác nhận",
-    ROLE_REQUESTER: 1
+    ROLE_REQUESTER: 1,
+    APPROVE_REGISTER_AMBULANCE: "approved",
+    REJECT_REGISTER_AMBULANCE: "rejected"
 };

@@ -8,7 +8,7 @@ const {
     grantRequesterPermission
 } = require("../services/requester.service");
 
-router.get("/admin/requesters", authorize(3), findAllRequestersAndPaging);
+router.get("/admin/requesters", findAllRequestersAndPaging);
 router.get("/admin/requesters/details/:requesterId", getRequesterDetails);
 router.put("/requesters/:userId/health_information", updateHealthInformation);
 router.get("/admin/requesters/:requesterId", grantRequesterPermission);

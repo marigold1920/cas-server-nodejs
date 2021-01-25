@@ -15,8 +15,13 @@ module.exports = {
         "INNER JOIN ambulance_status as s ON a.ambulance_status = s.status_code " +
         "WHERE s.name LIKE :status AND a.license_plate LIKE :keyword " +
         "ORDER BY a.registration_date DESC LIMIT :offset, :pageSize",
+    countAmbulances:
+        "SELECT COUNT(*) as count " +
+        "FROM ambulance as a INNER JOIN user as u ON a.driver_id = u.id " +
+        "INNER JOIN ambulance_status as s ON a.ambulance_status = s.status_code " +
+        "WHERE s.name LIKE :status AND a.license_plate LIKE :keyword",
     getAmbulanceDetails:
-        "SELECT a.id as ambulanceId, u.username, s.name as status, a.note, a.identity_card as identityCard, " +
+        "SELECT a.id as ambulanceId, u.username, s.status_code as status, a.note, a.identity_card as identityCard, " +
         "a.driver_license as driverLicense, a.register_license as registerLicense, a.registry_certificate as registryCertificate " +
         "FROM ambulance as a INNER JOIN user as u ON a.driver_id = u.id " +
         "INNER JOIN ambulance_status as s ON a.ambulance_status = s.status_code " +
@@ -44,10 +49,10 @@ module.exports = {
         "SELECT r.id, re.display_name AS requesterName, re.image_url AS requesterImage, dr.display_name AS driverName, " +
         "dr.image_url AS driverImage, a.license_plate AS licensePlate, r.is_emergency AS emergency, rs.name AS status " +
         "FROM request AS r INNER JOIN user AS re ON r.requester_id = re.id " +
-        "INNER JOIN user AS dr ON r.driver_id = dr.id " +
-        "INNER JOIN request_status AS rs ON r.request_status = rs.status_code " +
-        "INNER JOIN ambulance AS a ON r.ambulance_id = a.id " +
-        "WHERE (dr.display_name LIKE :keyword OR re.display_name LIKE :keyword) AND rs.name LIKE :status ORDER BY r.created_date DESC LIMIT :offset,:pageSize",
+        "LEFT JOIN user AS dr ON r.driver_id = dr.id " +
+        "LEFT JOIN request_status AS rs ON r.request_status = rs.status_code " +
+        "LEFT JOIN ambulance AS a ON r.ambulance_id = a.id " +
+        "WHERE (dr.display_name LIKE :keyword OR re.display_name LIKE :keyword) AND rs.name LIKE :status ORDER BY r.id DESC LIMIT :offset,:pageSize",
     updateSuccessRateForRequester:
         "UPDATE user SET success_rate = (SELECT COUNT(id) FROM request WHERE requester_id = :userId AND request_status = 'SUCCESS') / " +
         "(SELECT COUNT(id) FROM request WHERE requester_id = :userId) * 100, " +
@@ -55,5 +60,14 @@ module.exports = {
     updateSuccessRateForDriver:
         "UPDATE user SET success_rate = (SELECT COUNT(id) FROM request WHERE driver_id = :userId AND request_status = 'SUCCESS') / " +
         "(SELECT COUNT(id) FROM request WHERE driver_id = :userId) * 100, " +
-        "num_of_requests = (SELECT COUNT(id) FROM request WHERE driver_id = :userId) WHERE id = :userId"
+        "num_of_requests = (SELECT COUNT(id) FROM request WHERE driver_id = :userId) WHERE id = :userId",
+    checkIsRegistered:
+        "SELECT id FROM ambulance WHERE license_plate = :licensePlate AND (ambulance_status = 'ACTIVE' OR ambulance_status = 'CONFIRMING')",
+    countRequests:
+        "SELECT COUNT(*) AS count " +
+        "FROM request AS r INNER JOIN user AS re ON r.requester_id = re.id " +
+        "LEFT JOIN user AS dr ON r.driver_id = dr.id " +
+        "LEFT JOIN request_status AS rs ON r.request_status = rs.status_code " +
+        "LEFT JOIN ambulance AS a ON r.ambulance_id = a.id " +
+        "WHERE (dr.display_name LIKE :keyword OR re.display_name LIKE :keyword) AND rs.name LIKE :status"
 };
