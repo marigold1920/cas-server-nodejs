@@ -11,7 +11,9 @@ const {
     forgetPasswordAdmin,
     checkExistedUser,
     updatePersonalProfile,
-    saveSetting
+    saveSetting,
+    checkRegisteredRequester,
+    checkRegisteredDriver
 } = require("../services/user.service");
 
 const router = express.Router();
@@ -27,5 +29,7 @@ router.put("/setting", saveSetting);
 router.put("/drivers/forget_password", forgetPasswordDriver);
 router.put("/admins/forget_password", forgetPasswordAdmin);
 router.get("/check_exist", checkExistedUser);
+router.get("/requesters/registered", checkRegisteredRequester);
+router.get("/drivers/registered", checkRegisteredDriver);
 
 module.exports = router;

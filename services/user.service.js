@@ -191,6 +191,42 @@ exports.checkExistedUser = asyncHandler(async (req, res) => {
     res.status(200).json(user ? user.username : null);
 });
 
+exports.checkRegisteredRequester = asyncHandler(async (request, response) => {
+    const username = request.query.username;
+
+    const user = await model.User.findOne({
+        where: {
+            username,
+            role_id: Constant.ROLE_REQUESTER
+        }
+    });
+
+    if (!user) {
+        response.status(400).json();
+        return;
+    }
+
+    response.status(200).json();
+});
+
+exports.checkRegisteredDriver = asyncHandler(async (request, response) => {
+    const username = request.query.username;
+
+    const user = await model.User.findOne({
+        where: {
+            username,
+            role_id: Constant.ROLE_DRIVER
+        }
+    });
+
+    if (!user) {
+        response.status(400).json();
+        return;
+    }
+
+    response.status(200).json();
+});
+
 function omitHash(user) {
     const { password, ...userWithoutPassword } = user;
 
