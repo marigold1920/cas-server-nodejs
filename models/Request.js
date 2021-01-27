@@ -62,11 +62,11 @@ const Request = sequelize.define(
             field: "feedback_service"
         },
         ratingService: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.FLOAT,
             field: "rating_service"
         },
         ratingDriver: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.FLOAT,
             field: "rating_driver"
         },
         reason: {

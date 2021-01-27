@@ -3,21 +3,18 @@ const sequelize = require("../configs/database.config");
 const asyncHandler = require("../middlewares/asyncHandler");
 const queries = require("../configs/database.queries");
 const Constant = require("../utils/constants");
-const { QueryTypes, Op } = require("sequelize");
+const { QueryTypes } = require("sequelize");
 const { pushEvent, popEvent, addToBlackList } = require("./dispatcher.service");
 const { acceptRequest, updateRequestStatus } = require("../configs/firebase.config");
 
 exports.saveRequest = asyncHandler(async (request, response) => {
-    const current = new Date();
     const _request = request.body;
     const {
         pickUp: { latitude, longitude },
         isEmergency
     } = _request;
     const req = await model.Request.create({
-        ..._request,
-        createdTime: current.toLocaleTimeString("vi-VN"),
-        createdDate: current
+        ..._request
     });
     const userId = request.params.userId;
 
@@ -66,6 +63,17 @@ exports.acceptRequest = asyncHandler(async (request, response) => {
     });
     acceptRequest(username, requestId);
     popEvent(requestId);
+
+    response.status(200).json();
+});
+
+exports.rejectedRequest = asyncHandler(async (request, response) => {
+    await model.Request.update(
+        { reason: Constant.REJECTED_REASON, request_status: Constant.CANCELED_REQUEST_STATUS },
+        {
+            where: { id: request.params.requestId }
+        }
+    );
 
     response.status(200).json();
 });
@@ -312,8 +320,9 @@ exports.cancelRequestDriver = asyncHandler(async (request, response) => {
     );
     await sequelize.query(queries.updateSuccessRateForDriver, {
         type: QueryTypes.UPDATE,
-        replacements: { userId: req.driverId }
+        replacements: { userId: request.params.driverId }
     });
+    updateRequestStatus(requestId, Constant.REJECTED_REQUEST_STATUS);
 
     response.status(200).json(requestId);
 });

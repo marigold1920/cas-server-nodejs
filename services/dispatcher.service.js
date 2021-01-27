@@ -43,10 +43,9 @@ let cleaner = new Map();
 let config = {
     radius: 20,
     extraRadius: 5,
-    numOfDrivers: 10,
-    requestTimeout: 1,
-    termTimeout: 1,
-    maxRadius: 200
+    requestTimeout: 15,
+    termTimeout: 2,
+    maxRadius: 500
 };
 
 /**
@@ -62,8 +61,8 @@ const handleRequest = async ({ requestId, latitude, longitude, type }) => {
 
     // Dispatch request when having new drivers
     if (difference.length) {
-        dispatchRequestToDrivers(Number.parseInt(requestId), oldList.concat(difference)); // Send request to confirmations pool in Firestore, see change in "requestIds"
-        drivers.set(requestId, result); // Backup driver list to compare in next term
+        dispatchRequestToDrivers(Number.parseInt(requestId), difference); // Send request to confirmations pool in Firestore, see change in "requestIds"
+        drivers.set(requestId, oldList.concat(difference)); // Backup driver list to compare in next term
     }
 
     // No new driver, increase radius, keep pending event when current radius === maxRadius,

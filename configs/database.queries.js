@@ -14,7 +14,7 @@ module.exports = {
         "FROM ambulance as a INNER JOIN user as u ON a.driver_id = u.id " +
         "INNER JOIN ambulance_status as s ON a.ambulance_status = s.status_code " +
         "WHERE s.name LIKE :status AND a.license_plate LIKE :keyword " +
-        "ORDER BY a.registration_date DESC LIMIT :offset, :pageSize",
+        "ORDER BY a.id DESC LIMIT :offset, :pageSize",
     countAmbulances:
         "SELECT COUNT(*) as count " +
         "FROM ambulance as a INNER JOIN user as u ON a.driver_id = u.id " +

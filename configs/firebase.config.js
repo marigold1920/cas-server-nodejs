@@ -35,7 +35,7 @@ exports.findDrivers = (latitude, longitude, radius, type) => {
 
 exports.dispatchRequestToDrivers = async (requestId, drivers = []) => {
     const batch = firestore.batch();
-    const driverCollectionRef = firestore.collection("confirmations");
+    const driverCollectionRef = firestore.collection("drivers");
 
     drivers.forEach(d => {
         const driverDocumentRef = driverCollectionRef.doc(d);
@@ -50,7 +50,7 @@ exports.dispatchRequestToDrivers = async (requestId, drivers = []) => {
 
 exports.removeRequestFromDrivers = async (requestId, drivers) => {
     const batch = firestore.batch();
-    const driverCollectionRef = firestore.collection("confirmations");
+    const driverCollectionRef = firestore.collection("drivers");
 
     drivers.forEach(d => {
         const driverDocumentRef = driverCollectionRef.doc(d);
@@ -64,7 +64,7 @@ exports.removeRequestFromDrivers = async (requestId, drivers) => {
 };
 
 exports.removeAllRequestFromDrivers = async username => {
-    const driverDocumentRef = firestore.collection("confirmations").doc(username);
+    const driverDocumentRef = firestore.collection("drivers").doc(username);
 
     driverDocumentRef.update({
         requestIds: []
@@ -81,6 +81,7 @@ exports.acceptRequest = async (username, requestId) => {
 };
 
 exports.updateRequestStatus = async (requestId, status) => {
+    console.log(requestId, status);
     const requestRef = firestore.collection("requests").doc(`${requestId}`);
 
     await requestRef.update({ status });
@@ -100,4 +101,10 @@ exports.confirmRegisterAmbulance = async (username, status) => {
     await documentRef.update({
         confirmationStatus: status
     });
+};
+
+exports.signUpDriverFirestore = async (username, setting) => {
+    const driverRef = firestore.collection("drivers").doc(`${username}`);
+
+    driverRef.set({ ...setting });
 };

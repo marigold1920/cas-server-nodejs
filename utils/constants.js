@@ -15,6 +15,9 @@ module.exports = {
     DEACTIVE: "Ngưng hoạt động",
     CONFIRMING: "Chờ xác nhận",
     ROLE_REQUESTER: 1,
+    ROLE_DRIVER: 2,
     APPROVE_REGISTER_AMBULANCE: "approved",
-    REJECT_REGISTER_AMBULANCE: "rejected"
+    REJECT_REGISTER_AMBULANCE: "rejected",
+    DEFAULT_SETTING: { distance: 100, home: true, emergency: true },
+    REJECTED_REASON: "Hệ thống không tìm được tài xế thích hợp"
 };

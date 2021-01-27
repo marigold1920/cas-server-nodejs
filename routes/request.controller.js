@@ -13,7 +13,8 @@ const {
     cancelRequestRequester,
     cancelRequestDriver,
     rejectRequest,
-    feedbackRequest
+    feedbackRequest,
+    rejectedRequest
 } = require("../services/request.service");
 
 const router = express.Router();
@@ -23,13 +24,14 @@ router.get("/requester/requests/:requestId", getInfoDriver);
 router.get("/requester/:userId/requests/history", history);
 router.put("/requester/requests/:requestId", feedbackRequest);
 router.put("/requester/requests/cancel/:requestId", cancelRequestRequester);
+router.put("/requester/requests/rejected/:requestId", rejectedRequest);
 router.put("/driver/:driverId/requests", acceptRequest);
 router.get("/driver/:userId/requests/history", driverHistory);
 router.get("/driver/requests", getRequests);
 router.put("/driver/requests/reject", rejectRequest);
 router.put("/driver/requests/finish/:requestId", finishRequest);
 router.put("/driver/requests/pickup/:requestId", pickUpPatient);
-router.put("/driver/requests/cancel", cancelRequestDriver);
+router.put("/driver/requests/cancel/:driverId", cancelRequestDriver);
 router.get("/admin/requests", getAllRequestsAndPaging);
 router.get("/admin/requests/details/:requestId", getRequestDetails);
 
