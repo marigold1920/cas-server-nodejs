@@ -5,6 +5,9 @@ const asyncHandler = require("../middlewares/asyncHandler");
 const Constant = require("../utils/constants");
 const { response } = require("express");
 const { signUpDriverFirestore } = require("../configs/firebase.config");
+const { sequelize } = require("../models/Role");
+const queries = require("../configs/database.queries");
+const { QueryTypes } = require("sequelize");
 
 exports.saveSetting = asyncHandler(async (req, res) => {
     const setting = req.body;
@@ -82,7 +85,21 @@ exports.authenticateRequester = asyncHandler(async (req, res) => {
 
 exports.authenticateDriver = asyncHandler(async (req, res) => {
     const { username, password } = req.body;
-    const user = await model.User.scope("withHash").findOne({
+    let user = await model.User.scope("withHash").findOne({
+        where: {
+            username: username,
+            role_id: Constant.ROLE_DRIVER,
+            isActive: true
+        }
+    });
+    if (!user || !(await bcrypt.compare(password, user.password)))
+        throw "Username or password is incorrect";
+    await sequelize.query(queries.updateRating, {
+        type: QueryTypes.UPDATE,
+        replacements: { userId: user.id }
+    });
+    const token = jwt.sign({ sub: user.id }, process.env.JWT_KEY, { expiresIn: "1d" });
+    user = await model.User.scope("withHash").findOne({
         where: {
             username: username,
             role_id: Constant.ROLE_DRIVER,
@@ -90,9 +107,6 @@ exports.authenticateDriver = asyncHandler(async (req, res) => {
         }
     });
     const setting = await model.Setting.findOne({ where: { user_id: user.id } });
-    if (!user || !(await bcrypt.compare(password, user.password)))
-        throw "Username or password is incorrect";
-    const token = jwt.sign({ sub: user.id }, process.env.JWT_KEY, { expiresIn: "1d" });
 
     res.status(200).json({ user: { ...omitHash(user.get()), token }, setting });
 });

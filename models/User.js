@@ -37,7 +37,7 @@ const User = sequelize.define(
             defaultValue: new Date()
         },
         ratingLevel: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.FLOAT,
             field: "rating_level",
             defaultValue: 5
         },

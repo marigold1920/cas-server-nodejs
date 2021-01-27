@@ -81,16 +81,10 @@ exports.rejectedRequest = asyncHandler(async (request, response) => {
 exports.history = asyncHandler(async (request, response) => {
     const userId = request.params.userId;
     const pageIndex = request.query.pageIndex;
+    console.log(pageIndex);
     const history = await model.Request.findAll({
         attributes: {
-            exclude: [
-                "driver_id",
-                "requester_id",
-                "ambulance_id",
-                "region",
-                "createdDate",
-                "healthInformation"
-            ]
+            exclude: ["driver_id", "requester_id", "ambulance_id", "region", "healthInformation"]
         },
         include: [
             {
@@ -109,8 +103,13 @@ exports.history = asyncHandler(async (request, response) => {
         limit: Constant.PAGE_SIZE,
         order: [["id", "DESC"]]
     });
+    const count = await model.Request.count({ where: { requester_id: userId } });
 
-    response.status(200).json(history);
+    response.status(200).json({
+        data: history,
+        totalPage: Math.ceil((count / Constant.PAGE_SIZE) * 1.0),
+        currentPage: pageIndex
+    });
 });
 
 exports.driverHistory = asyncHandler(async (request, response) => {
@@ -118,14 +117,7 @@ exports.driverHistory = asyncHandler(async (request, response) => {
     const pageIndex = request.query.pageIndex;
     const history = await model.Request.findAll({
         attributes: {
-            exclude: [
-                "driver_id",
-                "requester_id",
-                "ambulance_id",
-                "region",
-                "createdDate",
-                "healthInformation"
-            ]
+            exclude: ["driver_id", "requester_id", "ambulance_id", "region", "healthInformation"]
         },
         include: [
             {
@@ -139,8 +131,13 @@ exports.driverHistory = asyncHandler(async (request, response) => {
         limit: Constant.PAGE_SIZE,
         order: [["id", "DESC"]]
     });
+    const count = await model.Request.count({ where: { driver_id: userId } });
 
-    response.status(200).json(history);
+    response.status(200).json({
+        data: history,
+        totalPage: Math.ceil((count / Constant.PAGE_SIZE) * 1.0),
+        currentPage: pageIndex
+    });
 });
 
 exports.getAllRequestsAndPaging = asyncHandler(async (request, response) => {

@@ -69,5 +69,7 @@ module.exports = {
         "LEFT JOIN user AS dr ON r.driver_id = dr.id " +
         "LEFT JOIN request_status AS rs ON r.request_status = rs.status_code " +
         "LEFT JOIN ambulance AS a ON r.ambulance_id = a.id " +
-        "WHERE (dr.display_name LIKE :keyword OR re.display_name LIKE :keyword) AND rs.name LIKE :status"
+        "WHERE (dr.display_name LIKE :keyword OR re.display_name LIKE :keyword) AND rs.name LIKE :status",
+    updateRating:
+        "UPDATE user SET rating_level = (SELECT ROUND(AVG(rating_driver), 1) as average FROM request WHERE driver_id = :userId AND rating_driver > 0) WHERE id = :userId"
 };
