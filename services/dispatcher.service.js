@@ -41,8 +41,8 @@ let blackList = new Map();
 let cleaner = new Map();
 
 let config = {
-    radius: 20,
-    extraRadius: 5,
+    radius: 50,
+    extraRadius: 10,
     requestTimeout: 15,
     termTimeout: 2,
     maxRadius: 500
