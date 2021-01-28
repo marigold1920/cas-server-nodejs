@@ -30,7 +30,8 @@ exports.getAllDriversAndPaging = asyncHandler(async (request, response) => {
         ],
         limit: Constant.PAGE_SIZE,
         offset: (pageIndex - 1) * Constant.PAGE_SIZE,
-        where: conditions
+        where: conditions,
+        order: [["id", "DESC"]]
     });
     const count = await model.User.count({ where: conditions });
 
@@ -113,16 +114,16 @@ exports.grantDriverPermission = asyncHandler(async (request, response) => {
             );
         }
     } else {
-        const currentAmbulance = await model.Setting.findOne({
-            attributes: ["current_ambulance"],
-            where: { user_id: userId }
+        const currentAmbulance = await sequelize.query(queries.getCurrentAmbulance, {
+            type: QueryTypes.SELECT,
+            replacements: { userId }
         });
-        console.log(currentAmbulance);
 
-        if (currentAmbulance) {
+        if (currentAmbulance.length) {
+            const ambulance = currentAmbulance[0].current_ambulance;
             await model.Ambulance.update(
-                { ambulance_status: currentAmbulance.ambulance_status },
-                { where: { id: currentAmbulance.id } }
+                { ambulance_status: ambulance.ambulance_status },
+                { where: { id: ambulance.id } }
             );
             await model.Setting.update({ currentAmbulance: null }, { where: { user_id: userId } });
         }

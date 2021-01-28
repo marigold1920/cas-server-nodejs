@@ -71,5 +71,6 @@ module.exports = {
         "LEFT JOIN ambulance AS a ON r.ambulance_id = a.id " +
         "WHERE (dr.display_name LIKE :keyword OR re.display_name LIKE :keyword) AND rs.name LIKE :status",
     updateRating:
-        "UPDATE user SET rating_level = (SELECT ROUND(AVG(rating_driver), 1) as average FROM request WHERE driver_id = :userId AND rating_driver > 0) WHERE id = :userId"
+        "UPDATE user SET rating_level = (SELECT ROUND(AVG(rating_driver), 1) as average FROM request WHERE driver_id = :userId AND rating_driver > 0) WHERE id = :userId",
+    getCurrentAmbulance: "SELECT current_ambulance FROM setting WHERE user_id = :userId"
 };

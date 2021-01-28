@@ -29,7 +29,8 @@ exports.findAllRequestersAndPaging = asyncHandler(async (request, response) => {
         ],
         limit: Constant.PAGE_SIZE,
         offset: (pageIndex - 1) * Constant.PAGE_SIZE,
-        where: conditions
+        where: conditions,
+        order: [["id", "DESC"]]
     });
     const count = await model.User.count({ where: conditions });
 

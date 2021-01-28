@@ -172,18 +172,18 @@ exports.getRequestDetails = asyncHandler(async (request, response) => {
     const requestId = request.params.requestId;
     const _request = await model.Request.findByPk(requestId, {
         attributes: {
-            exclude: ["driver_id", "requester_id", "ambulance_id", "region", "isOther"]
+            exclude: ["driver_id", "requester_id", "ambulance_id", "region"]
         },
         include: [
             {
                 model: model.User,
                 as: "driver",
-                attributes: ["displayName", "imageUrl"]
+                attributes: ["displayName", "imageUrl", "phone"]
             },
             {
                 model: model.User,
                 as: "requester",
-                attributes: ["displayName", "imageUrl"]
+                attributes: ["displayName", "imageUrl", "phone"]
             },
             {
                 model: model.Ambulance,

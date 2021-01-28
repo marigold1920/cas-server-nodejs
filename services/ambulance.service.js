@@ -101,7 +101,8 @@ exports.acceptRegistedAmbulance = asyncHandler(async (request, response) => {
 exports.rejectRegistedAmbulance = asyncHandler(async (request, response) => {
     await model.Ambulance.update(
         {
-            note: request.body
+            note: request.body,
+            ambulance_status: Constant.DEFAULT_AMBULANCE_STATUS
         },
         {
             where: {

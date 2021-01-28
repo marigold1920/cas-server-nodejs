@@ -185,3 +185,7 @@ exports.updateConfig = newConfig => {
         };
     }, {});
 };
+
+exports.getConfig = () => {
+    return config;
+};
