@@ -13,13 +13,13 @@ module.exports = {
         "DATE_FORMAT(a.registration_date, '%d/%m/%Y') as registrationDate, DATE_FORMAT(a.expiration_date, '%d/%m/%Y') as expirationDate, s.name as status " +
         "FROM ambulance as a INNER JOIN user as u ON a.driver_id = u.id " +
         "INNER JOIN ambulance_status as s ON a.ambulance_status = s.status_code " +
-        "WHERE s.name LIKE :status AND a.license_plate LIKE :keyword " +
+        "WHERE s.name LIKE :status AND (a.license_plate LIKE :keyword OR u.display_name LIKE :keyword) " +
         "ORDER BY a.id DESC LIMIT :offset, :pageSize",
     countAmbulances:
         "SELECT COUNT(*) as count " +
         "FROM ambulance as a INNER JOIN user as u ON a.driver_id = u.id " +
         "INNER JOIN ambulance_status as s ON a.ambulance_status = s.status_code " +
-        "WHERE s.name LIKE :status AND a.license_plate LIKE :keyword",
+        "WHERE s.name LIKE :status AND (a.license_plate LIKE :keyword OR u.display_name LIKE :keyword)",
     getAmbulanceDetails:
         "SELECT a.id as ambulanceId, u.username, s.status_code as status, a.note, a.identity_card as identityCard, " +
         "a.driver_license as driverLicense, a.register_license as registerLicense, a.registry_certificate as registryCertificate " +

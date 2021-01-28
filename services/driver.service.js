@@ -13,7 +13,7 @@ exports.getAllDriversAndPaging = asyncHandler(async (request, response) => {
             [Op.like]: `%${keyword}%`
         },
         is_active: {
-            [Op.like]: `%${status}%`
+            [Op.like]: `%${status === "Đang hoạt động" ? 1 : status ? 0 : ""}%`
         },
         role_id: 2
     };
@@ -91,6 +91,42 @@ exports.grantDriverPermission = asyncHandler(async (request, response) => {
     }
 
     const driver = await model.User.findByPk(userId);
+
+    if (driver.isActive) {
+        const ambulance = await model.Ambulance.findOne({
+            where: {
+                driver_id: userId,
+                ambulance_status: [
+                    Constant.ACTIVE_AMBULANCE_STATUS,
+                    Constant.DEFAULT_AMBULANCE_STATUS
+                ]
+            }
+        });
+        if (ambulance) {
+            await model.Setting.update(
+                { currentAmbulance: ambulance },
+                { where: { user_id: userId } }
+            );
+            await model.Ambulance.update(
+                { ambulance_status: Constant.DEACTIVE_AMBULANCE_STATUS },
+                { where: { driver_id: userId } }
+            );
+        }
+    } else {
+        const currentAmbulance = await model.Setting.findOne({
+            attributes: ["current_ambulance"],
+            where: { user_id: userId }
+        });
+        console.log(currentAmbulance);
+
+        if (currentAmbulance) {
+            await model.Ambulance.update(
+                { ambulance_status: currentAmbulance.ambulance_status },
+                { where: { id: currentAmbulance.id } }
+            );
+            await model.Setting.update({ currentAmbulance: null }, { where: { user_id: userId } });
+        }
+    }
 
     await driver.update({ isActive: !driver.isActive });
 

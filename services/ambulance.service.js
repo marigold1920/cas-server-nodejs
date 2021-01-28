@@ -29,7 +29,7 @@ exports.findAllAmbulancesAndPaging = asyncHandler(async (request, response) => {
     response.status(200).json({
         data: ambulances,
         totalPage: Math.ceil((count[0].count * 1.0) / Constant.PAGE_SIZE),
-        currentPage: pageIndex
+        currentPage: Number.parseInt(pageIndex)
     });
 });
 

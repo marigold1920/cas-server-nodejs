@@ -6,6 +6,13 @@ const {
     createRequest
 } = require("../configs/firebase.config");
 
+const mapKey = {
+    1: "requestTimeout",
+    2: "termTimeout",
+    3: "radius",
+    4: "extraRadius",
+    5: "maxRadius"
+};
 /**
  * @description Data will be passed to re-assign task when all drivers rejected the request.
  * @see addToBlackList
@@ -171,5 +178,10 @@ exports.addToBlackList = (requestIds, username) => {
 };
 
 exports.updateConfig = newConfig => {
-    config = newConfig;
+    config = newConfig.reduce((acc, cur) => {
+        return {
+            ...acc,
+            [mapKey[cur.itemId]]: Number.parseInt(cur.value)
+        };
+    }, {});
 };

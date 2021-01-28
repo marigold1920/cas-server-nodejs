@@ -1,5 +1,6 @@
 const asyncHandler = require("../middlewares/asyncHandler");
 const model = require("../models/Model.master");
+const { updateConfig } = require("./dispatcher.service");
 
 exports.getConfiguration = asyncHandler(async (request, response) => {
     const configurations = await model.Configuration.findAll();
@@ -15,6 +16,8 @@ exports.updateSystemConfiguration = asyncHandler(async (request, response) => {
             where: { item_id: configurations[i].itemId }
         });
     }
+
+    updateConfig(configurations);
 
     response.status(200).json(configurations);
 });

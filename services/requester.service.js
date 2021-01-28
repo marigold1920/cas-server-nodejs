@@ -12,7 +12,7 @@ exports.findAllRequestersAndPaging = asyncHandler(async (request, response) => {
             [Op.like]: `%${keyword}%`
         },
         is_active: {
-            [Op.like]: `%${status}%`
+            [Op.like]: `%${status === "Đang hoạt động" ? 1 : status ? 0 : ""}%`
         },
         role_id: 1
     };
