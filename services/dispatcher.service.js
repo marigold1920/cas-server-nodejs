@@ -48,10 +48,10 @@ let blackList = new Map();
 let cleaner = new Map();
 
 let config = {
-    radius: 50,
+    radius: 20,
     extraRadius: 10,
     requestTimeout: 15,
-    termTimeout: 2,
+    termTimeout: 1,
     maxRadius: 500
 };
 
@@ -102,7 +102,7 @@ const assignTask = ({ requestId, latitude, longitude, type }) => {
     const { radius, termTimeout } = config;
     const task = setInterval(
         () => handleRequest({ requestId, latitude, longitude, type }),
-        termTimeout * 25 * 1000
+        termTimeout * 60 * 1000
     );
 
     backupRadiuses.set(requestId, radius);

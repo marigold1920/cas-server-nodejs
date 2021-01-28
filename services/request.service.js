@@ -3,6 +3,7 @@ const sequelize = require("../configs/database.config");
 const asyncHandler = require("../middlewares/asyncHandler");
 const queries = require("../configs/database.queries");
 const Constant = require("../utils/constants");
+const { calculateRemainingTime } = require("../utils/helper");
 const { QueryTypes, Op } = require("sequelize");
 const { pushEvent, popEvent, addToBlackList } = require("./dispatcher.service");
 const { acceptRequest, updateRequestStatus } = require("../configs/firebase.config");
@@ -202,7 +203,8 @@ exports.getRequestDetails = asyncHandler(async (request, response) => {
 
 exports.getRequests = asyncHandler(async (request, response) => {
     const requestIds = request.query.requestId;
-    let _request = await model.Request.findAll({
+    let timeout = await model.Configuration.findByPk(1);
+    let requests = await model.Request.findAll({
         attributes: [
             ["id", "requestId"],
             "pickUp",
@@ -225,7 +227,10 @@ exports.getRequests = asyncHandler(async (request, response) => {
         where: { id: requestIds }
     });
 
-    response.status(200).json(_request);
+    requests = requests.map(r => r.get({ plain: true }));
+    timeout = timeout.get({ plain: true });
+
+    response.status(200).json(calculateRemainingTime(requests, timeout.value));
 });
 
 exports.getInfoDriver = asyncHandler(async (request, response) => {
@@ -342,11 +347,3 @@ exports.feedbackRequest = asyncHandler(async (request, response) => {
 
     response.status(200).json(requestId);
 });
-
-const calculateRemainingTime = (createdDate, createdTime, timeout) => {
-    const current = new Date().toISOString();
-    const start = `${createdDate}T${createdTime}Z`;
-    const diff = 25200 - (new Date(start).getTime() - new Date(current).getTime()) / 1000 - 3;
-
-    return timeout - Math.round(diff);
-};
