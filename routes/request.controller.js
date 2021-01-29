@@ -1,4 +1,5 @@
 const express = require("express");
+const authorize = require("../middlewares/authorize");
 const {
     saveRequest,
     acceptRequest,
@@ -19,15 +20,15 @@ const {
 
 const router = express.Router();
 
-router.route("/requester/requests/:userId").post(saveRequest);
+router.post("/requester/requests/:userId", authorize([1]), saveRequest);
 router.get("/requester/requests/:requestId", getInfoDriver);
-router.get("/requester/:userId/requests/history", history);
-router.put("/requester/requests/:requestId", feedbackRequest);
+router.get("/requester/:userId/requests/history", authorize([1]), history);
+router.put("/requester/requests/:requestId", authorize([1]), feedbackRequest);
 router.put("/requester/requests/cancel/:requestId", cancelRequestRequester);
 router.put("/requester/requests/rejected/:requestId", rejectedRequest);
-router.put("/driver/:driverId/requests", acceptRequest);
-router.get("/driver/:userId/requests/history", driverHistory);
-router.get("/driver/requests", getRequests);
+router.put("/driver/:driverId/requests", authorize([2]), acceptRequest);
+router.get("/driver/:userId/requests/history", authorize([2]), driverHistory);
+router.get("/driver/requests", authorize([2]), getRequests);
 router.put("/driver/requests/reject", rejectRequest);
 router.put("/driver/requests/finish/:requestId", finishRequest);
 router.put("/driver/requests/pickup/:requestId", pickUpPatient);

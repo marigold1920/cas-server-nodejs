@@ -1,4 +1,5 @@
 const express = require("express");
+const authorize = require("../middlewares/authorize");
 
 const {
     authenticateRequester,
@@ -23,7 +24,7 @@ router.post("/login_driver", authenticateDriver);
 router.post("/login_admin", authenticateAdmin);
 router.post("/signup_requester", signUpRequester);
 router.post("/signup_driver", signUpDriver);
-router.put("/:userId/profile", updatePersonalProfile);
+router.put("/:userId/profile", authorize([1, 2]), updatePersonalProfile);
 router.put("/requesters/forget_password", forgetPasswordRequester);
 router.put("/setting", saveSetting);
 router.put("/drivers/forget_password", forgetPasswordDriver);

@@ -10,7 +10,7 @@ const {
 
 router.get("/admin/requesters", findAllRequestersAndPaging);
 router.get("/admin/requesters/details/:requesterId", getRequesterDetails);
-router.put("/requesters/:userId/health_information", updateHealthInformation);
+router.put("/requesters/:userId/health_information", authorize([1]), updateHealthInformation);
 router.get("/admin/requesters/:requesterId", grantRequesterPermission);
 
 module.exports = router;
