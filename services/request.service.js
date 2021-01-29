@@ -339,11 +339,16 @@ exports.rejectRequest = asyncHandler(async (request, response) => {
     response.status(200).json();
 });
 
-exports.feedbackRequest = asyncHandler(async (request, response) => {
-    const requestId = request.params.requestId;
-    const feedback = request.body;
+exports.feedbackRequest = asyncHandler(async (req, res) => {
+    const requestId = req.params.requestId;
+    const feedback = req.body;
+    const request = await model.Request.findByPk(requestId);
+    await sequelize.query(queries.updateRating, {
+        type: QueryTypes.UPDATE,
+        replacements: { userId: request.driver_id }
+    });
 
     await model.Request.update(feedback, { where: { id: requestId } });
 
-    response.status(200).json(requestId);
+    res.status(200).json(requestId);
 });
