@@ -47,7 +47,7 @@ module.exports = {
         "WHERE r.driver_id = :userId ORDER BY r.created_date DESC LIMIT :offset, :pageSize",
     getRequestsForAdmin:
         "SELECT r.id, re.display_name AS requesterName, re.image_url AS requesterImage, dr.display_name AS driverName, " +
-        "dr.image_url AS driverImage, a.license_plate AS licensePlate, r.is_emergency AS emergency, rs.name AS status " +
+        "dr.image_url AS driverImage, a.license_plate AS licensePlate, r.is_emergency AS emergency, r.is_other AS isOther, rs.name AS status " +
         "FROM request AS r INNER JOIN user AS re ON r.requester_id = re.id " +
         "LEFT JOIN user AS dr ON r.driver_id = dr.id " +
         "LEFT JOIN request_status AS rs ON r.request_status = rs.status_code " +
